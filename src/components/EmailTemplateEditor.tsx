@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +13,9 @@ import TemplateThree from "./email-templates/TemplateThree";
 import TemplateFour from "./email-templates/TemplateFour";
 import TemplateFive from "./email-templates/TemplateFive";
 import TemplateSix from "./email-templates/TemplateSix";
+import TemplateSeven from "./email-templates/TemplateSeven";
+import TemplateEight from "./email-templates/TemplateEight";
+import TemplateNine from "./email-templates/TemplateNine";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -75,6 +79,9 @@ const EmailTemplateEditor = () => {
       case "template4": return <TemplateFour {...templateProps} />;
       case "template5": return <TemplateFive {...templateProps} />;
       case "template6": return <TemplateSix {...templateProps} />;
+      case "template7": return <TemplateSeven {...templateProps} />;
+      case "template8": return <TemplateEight {...templateProps} />;
+      case "template9": return <TemplateNine {...templateProps} />;
       default: return <TemplateOne {...templateProps} />;
     }
   };
@@ -425,6 +432,28 @@ const EmailTemplateEditor = () => {
                   onClick={() => setSelectedTemplate("template6")}
                 >
                   <span className="text-xs">Políticas</span>
+                </Button>
+                {/* New template buttons */}
+                <Button
+                  variant={selectedTemplate === "template7" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template7")}
+                >
+                  <span className="text-xs">Transformación</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template8" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template8")}
+                >
+                  <span className="text-xs">Eventos</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template9" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template9")}
+                >
+                  <span className="text-xs">Innovación</span>
                 </Button>
               </div>
             </CardContent>
