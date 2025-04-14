@@ -28,6 +28,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       from: options.from,
     });
     
+    // Note: 'from' will be replaced with the default Resend email in the edge function
     const { data, error } = await supabase.functions.invoke('send-email', {
       body: options
     });
@@ -50,7 +51,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
 
     return {
       success: true,
-      message: "Correo enviado exitosamente",
+      message: "Correo enviado exitosamente desde onboarding@resend.dev",
       previewUrl: data?.previewUrl
     };
   } catch (error) {

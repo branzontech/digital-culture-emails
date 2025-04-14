@@ -41,25 +41,16 @@ serve(async (req) => {
 
     const { to, subject, htmlContent, from } = await req.json()
 
-    // Format the 'from' properly - Resend requires a string
-    let fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
+    // Always use the Resend default email for sending
+    // This avoids domain verification issues
+    const fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
     
-    // If 'from' is provided, format it as a string
-    if (from) {
-      if (typeof from === 'string') {
-        fromValue = from;
-      } else if (typeof from === 'object' && from.email) {
-        // Format as "Name <email>" if name exists, otherwise just email
-        fromValue = from.name 
-          ? `${from.name} <${from.email}>`
-          : from.email;
-      }
-    }
-
-    console.log("Attempting to send email with:", { 
+    // Log the original 'from' request and what we're using
+    console.log("Email request with original from:", { 
       to, 
-      subject, 
-      from: fromValue // Log the formatted 'from' value
+      subject,
+      originalFrom: from,
+      usingFrom: fromValue
     });
     
     const data = await resend.emails.send({
