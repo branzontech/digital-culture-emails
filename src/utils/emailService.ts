@@ -35,6 +35,25 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     
     // Verificar si el servidor está en ejecución antes de enviar
     try {
+      // Intenta hacer una conexión con timeout reducido para verificar rápidamente
+      const testResponse = await fetch(API_URL.replace('/api/send-email', ''), {
+        method: 'HEAD',
+        signal: AbortSignal.timeout(2000), // 2 segundos de timeout
+      });
+      
+      if (!testResponse.ok) {
+        throw new Error('El servidor no respondió correctamente');
+      }
+    } catch (error) {
+      console.error("Error de conexión al servidor:", error);
+      return {
+        success: false,
+        message: "No se pudo conectar al servidor de correo. Asegúrate de que el servidor backend esté en ejecución ejecutando 'cd server && npm run dev' en una terminal separada. También verifica que hayas creado el archivo .env con la API key de Resend."
+      };
+    }
+    
+    // Continuar con el envío del correo si la conexión funciona
+    try {
       // En modo desarrollo, enviar a través del backend configurado
       const response = await fetch(API_URL, {
         method: "POST",
