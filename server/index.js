@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -12,13 +11,20 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
+
+// Configuración de CORS más permisiva para desarrollo
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://tu-dominio-frontend.com'] // Reemplaza con tu dominio de producción
-    : ['http://localhost:8080', 'http://localhost:5173'],  // Permitir desde los orígenes de desarrollo
-  methods: ['POST'],
+    ? true  // Permitir cualquier origen en producción, o especificar dominio exacto si es necesario
+    : ['http://localhost:8080', 'http://localhost:5173', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173'],
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Agregar una ruta básica para verificar si el servidor está en funcionamiento
+app.get('/', (req, res) => {
+  res.status(200).send('Servidor de correo electrónico funcionando correctamente');
+});
 
 // Configurar transportador de correo
 let transporter;

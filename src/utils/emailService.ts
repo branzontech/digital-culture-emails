@@ -19,10 +19,10 @@ interface EmailResponse {
 
 import { isProd } from "@/lib/utils";
 
-// La URL donde estará el endpoint de nuestro backend
+// Actualizamos la URL de API para que use el mismo dominio/puerto que el servidor backend
 const API_URL = isProd 
-  ? "https://tu-dominio-backend.com/api/send-email"  // Cambia esto por tu URL de producción
-  : "http://localhost:3000/api/send-email";         // URL para desarrollo local
+  ? "/api/send-email"  // En producción, usamos una ruta relativa
+  : "http://localhost:3000/api/send-email";  // URL para desarrollo local
 
 export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
@@ -36,7 +36,10 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     // Verificar si el servidor está en ejecución antes de enviar
     try {
       // Intenta hacer una conexión con timeout reducido para verificar rápidamente
-      const testResponse = await fetch(API_URL.replace('/api/send-email', ''), {
+      const testConnection = API_URL.replace('/api/send-email', '');
+      const testUrl = isProd ? window.location.origin + testConnection : testConnection;
+      
+      const testResponse = await fetch(testUrl, {
         method: 'HEAD',
         signal: AbortSignal.timeout(2000), // 2 segundos de timeout
       });
@@ -54,8 +57,10 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     
     // Continuar con el envío del correo si la conexión funciona
     try {
-      // En modo desarrollo, enviar a través del backend configurado
-      const response = await fetch(API_URL, {
+      // Determinar la URL completa en base al entorno
+      const fullApiUrl = isProd ? window.location.origin + API_URL : API_URL;
+      
+      const response = await fetch(fullApiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
