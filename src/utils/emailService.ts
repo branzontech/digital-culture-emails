@@ -1,4 +1,3 @@
-import { isProd } from '@/lib/utils';
 
 interface EmailRecipient {
   email: string;
@@ -12,11 +11,11 @@ interface EmailSendOptions {
   from?: EmailRecipient;
 }
 
-// These should be environment variables or stored securely
+// Configuración para Office 365
 const SMTP_USER = "soporteit@cuidadoseguro.com.co";
 const SMTP_PASS = "N@078076206087ur";
-const SMTP_HOST = "smtp.gmail.com"; // Adjust this based on your email provider
-const SMTP_PORT = 587; // Adjust this based on your email provider
+const SMTP_HOST = "smtp.office365.com"; // Servidor SMTP de Office 365
+const SMTP_PORT = 587; // Puerto recomendado para Office 365 con TLS
 
 export const sendEmail = async (options: EmailSendOptions): Promise<{ success: boolean; message: string }> => {
   try {
@@ -29,7 +28,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<{ success: b
       smtpConfig: {
         host: SMTP_HOST,
         port: SMTP_PORT,
-        secure: Number(SMTP_PORT) === 465, // Use Number() to ensure type compatibility
+        secure: SMTP_PORT === 587 ? false : true, // TLS para puerto 587
         auth: {
           user: SMTP_USER,
           // Password redacted for security
