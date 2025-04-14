@@ -57,7 +57,6 @@ const TemplateFive: React.FC<TemplateFiveProps> = ({
         <p style={{ 
           color: "#555", 
           fontSize: "17px", 
-          margin: "0 0 25px 0",
           lineHeight: "1.5",
           maxWidth: "480px",
           margin: "0 auto 30px auto"

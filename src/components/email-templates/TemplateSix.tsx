@@ -90,8 +90,7 @@ const TemplateSix: React.FC<TemplateSixProps> = ({
         <h2 style={{ 
           color: "#555", 
           fontSize: "18px", 
-          fontWeight: "normal", 
-          margin: "0 0 30px 0",
+          fontWeight: "normal",
           maxWidth: "440px",
           margin: "0 auto 30px auto",
           lineHeight: "1.4"
