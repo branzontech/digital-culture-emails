@@ -1,22 +1,3 @@
-
-interface EmailRecipient {
-  email: string;
-  name?: string;
-}
-
-interface EmailSendOptions {
-  to: EmailRecipient | EmailRecipient[];
-  subject: string;
-  htmlContent: string;
-  from?: EmailRecipient;
-}
-
-interface EmailResponse {
-  success: boolean;
-  message: string;
-  previewUrl?: string;
-}
-
 import { supabase } from "@/integrations/supabase/client";
 import { isProd } from "@/lib/utils";
 
