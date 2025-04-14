@@ -33,26 +33,41 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       from: options.from,
     });
     
-    // En modo desarrollo, enviar a través del backend configurado
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(options),
-    });
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.message || "Error desconocido al enviar el correo");
+    // Verificar si el servidor está en ejecución antes de enviar
+    try {
+      // En modo desarrollo, enviar a través del backend configurado
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(options),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Error desconocido al enviar el correo");
+      }
+      
+      return {
+        success: true,
+        message: data.message || "Correo enviado exitosamente",
+        previewUrl: data.previewUrl
+      };
+    } catch (error) {
+      // Si es un error de red, proporcionar un mensaje más claro
+      if (error instanceof TypeError && error.message.includes("NetworkError")) {
+        console.error("Error de conexión al servidor:", error);
+        return {
+          success: false,
+          message: "No se pudo conectar al servidor de correo. Asegúrate de que el servidor backend esté en ejecución ejecutando 'cd server && npm run dev' en una terminal separada."
+        };
+      }
+      
+      // Otros errores
+      throw error;
     }
-    
-    return {
-      success: true,
-      message: data.message || "Correo enviado exitosamente",
-      previewUrl: data.previewUrl
-    };
   } catch (error) {
     console.error("Error al procesar el envío de email:", error);
     return {
