@@ -68,7 +68,25 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
         body: JSON.stringify(options),
       });
       
-      const data = await response.json();
+      // Primero verificar el tipo de contenido de la respuesta
+      const contentType = response.headers.get("content-type");
+      let data;
+      
+      // Verificar si la respuesta es JSON antes de intentar parsearla
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        // Si no es JSON, obtener el texto y manejarlo adecuadamente
+        const textResponse = await response.text();
+        console.log("Respuesta no JSON recibida:", textResponse);
+        
+        // Intentar crear un objeto manualmente
+        data = {
+          message: response.ok 
+            ? "Correo enviado exitosamente (respuesta no-JSON)" 
+            : `Error: ${textResponse || "respuesta vacía"}`
+        };
+      }
       
       if (!response.ok) {
         throw new Error(data.message || "Error desconocido al enviar el correo");
