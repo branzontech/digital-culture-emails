@@ -11,55 +11,64 @@ interface EmailSendOptions {
   from?: EmailRecipient;
 }
 
-// Configuración para Office 365
-const SMTP_USER = "soporteit@cuidadoseguro.com.co";
-const SMTP_PASS = "N@078076206087ur";
-const SMTP_HOST = "smtp.office365.com"; // Servidor SMTP de Office 365
-const SMTP_PORT = 587; // Puerto recomendado para Office 365 con TLS
+import { isProd } from "@/lib/utils";
+
+// La URL donde estará el endpoint de nuestro backend
+const API_URL = isProd 
+  ? "https://tu-dominio-backend.com/api/send-email"  // Cambia esto por tu URL de producción
+  : "http://localhost:3000/api/send-email";         // URL para desarrollo local
 
 export const sendEmail = async (options: EmailSendOptions): Promise<{ success: boolean; message: string }> => {
   try {
-    // En la aplicación actual, estamos simulando el envío de correo
-    // En un entorno de producción real, esta función debería conectarse a un backend seguro
-    // que maneje la conexión SMTP
-    
     console.log("Intentando enviar email con opciones:", {
-      ...options,
-      // No mostrar credenciales sensibles en el log
-      smtpConfig: {
-        host: SMTP_HOST,
-        port: SMTP_PORT,
-        secure: SMTP_PORT === 587 ? false : true, // TLS para puerto 587
-        auth: {
-          user: SMTP_USER,
-          // Password redacted for security
-        }
-      }
+      to: options.to,
+      subject: options.subject,
+      // No logueamos el contenido HTML completo por brevedad
+      from: options.from,
     });
     
-    // IMPORTANTE: Esta es una aplicación de demostración
-    // Actualmente no estamos enviando correos reales ya que eso requeriría:
-    // 1. Un servidor backend seguro para manejar credenciales SMTP
-    // 2. Configuración adecuada de CORS y seguridad
-    // 3. Posiblemente una API de servicio de correo como SendGrid, Mailgun, etc.
+    // En modo desarrollo, simulamos el envío para facilitar pruebas
+    if (!isProd) {
+      // Simular una demora de red para dar feedback visual al usuario
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const recipients = Array.isArray(options.to) 
+        ? options.to.map(r => r.email).join(", ") 
+        : options.to.email;
+      
+      console.log("Simulando envío de correo en modo desarrollo");
+      
+      // Mostrar mensaje informativo en desarrollo
+      return {
+        success: true,
+        message: `DESARROLLO: Simulación de envío a ${recipients}. En producción, se enviará realmente a través del backend.`
+      };
+    }
     
-    // Simular una demora de red para dar feedback visual al usuario
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // En producción, enviar a través del backend
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options),
+    });
     
-    const recipients = Array.isArray(options.to) 
-      ? options.to.map(r => r.email).join(", ") 
-      : options.to.email;
+    const data = await response.json();
     
-    // Mensaje más claro sobre la simulación
+    if (!response.ok) {
+      throw new Error(data.message || "Error desconocido al enviar el correo");
+    }
+    
     return {
-      success: false, // Cambiado a false para ser honesto con el usuario
-      message: `DEMOSTRACIÓN: El correo a ${recipients} no se ha enviado realmente. Esta es una simulación. Para implementar el envío real de correos, se requiere un backend seguro.`
+      success: true,
+      message: data.message || "Correo enviado exitosamente"
     };
   } catch (error) {
-    console.error("Error simulando envío de email:", error);
+    console.error("Error al procesar el envío de email:", error);
     return {
       success: false,
-      message: `Error en la simulación de envío: ${error instanceof Error ? error.message : 'Error desconocido'}`
+      message: `Error: ${error instanceof Error ? error.message : 'Error desconocido'}`
     };
   }
 };
