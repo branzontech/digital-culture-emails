@@ -1,7 +1,4 @@
-
-// IMPORTANT: In a production environment, SMTP credentials should be stored
-// securely on the backend, not in the frontend. This implementation is for 
-// demonstration purposes only.
+import { isProd } from '@/lib/utils';
 
 interface EmailRecipient {
   email: string;
@@ -32,7 +29,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<{ success: b
       smtpConfig: {
         host: SMTP_HOST,
         port: SMTP_PORT,
-        secure: SMTP_PORT === 465, // Use runtime comparison
+        secure: Number(SMTP_PORT) === 465, // Use Number() to ensure type compatibility
         auth: {
           user: SMTP_USER,
           // Password redacted for security
@@ -77,4 +74,3 @@ export const parseEmailList = (emailsString: string): EmailRecipient[] => {
     .filter(validateEmail)
     .map(email => ({ email }));
 };
-
