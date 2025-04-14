@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mailgun = require('mailgun-js');
 const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 require('dotenv').config();
 
 const app = express();
@@ -22,10 +23,15 @@ app.use(cors({
 // Configurar transportador de correo
 let transporter;
 let mailgunClient;
+let resendClient;
 
 // Inicialización asíncrona del transportador
 const initializeTransporter = async () => {
-  if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+  if (process.env.RESEND_API_KEY) {
+    // Usar Resend si está configurado
+    console.log('Configurando servicio de correo con Resend...');
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  } else if (process.env.SMTP_HOST && process.env.SMTP_USER) {
     // Usar configuración SMTP si está disponible
     console.log('Configurando servicio de correo con SMTP...');
     
@@ -106,6 +112,43 @@ const sendWithMailgun = async (data) => {
   };
 };
 
+// Función para enviar correo con Resend
+const sendWithResend = async (data) => {
+  try {
+    const { to, subject, htmlContent, from } = data;
+    
+    // Formatear el destinatario para Resend
+    let toAddresses;
+    if (Array.isArray(to)) {
+      // Para envíos masivos, Resend acepta un array de correos
+      toAddresses = to.map(recipient => {
+        return recipient.name ? `${recipient.name} <${recipient.email}>` : recipient.email;
+      });
+    } else {
+      toAddresses = to.name ? `${to.name} <${to.email}>` : to.email;
+    }
+    
+    // Enviar el correo con Resend
+    const response = await resendClient.emails.send({
+      from: from || process.env.DEFAULT_FROM_EMAIL || 'onboarding@resend.dev',
+      to: toAddresses,
+      subject: subject,
+      html: htmlContent
+    });
+    
+    console.log('Correo enviado exitosamente con Resend:', response);
+    
+    return {
+      success: true,
+      message: 'Correo enviado exitosamente con Resend',
+      id: response.id
+    };
+  } catch (error) {
+    console.error('Error al enviar correo con Resend:', error);
+    throw error;
+  }
+};
+
 // Ruta para enviar correos
 app.post('/api/send-email', async (req, res) => {
   try {
@@ -129,7 +172,15 @@ app.post('/api/send-email', async (req, res) => {
     // Intentar enviar el correo con el método disponible
     let result;
     
-    if (transporter) {
+    if (resendClient) {
+      // Intentar primero con Resend
+      result = await sendWithResend({
+        to, 
+        subject, 
+        htmlContent, 
+        from: formattedFrom
+      });
+    } else if (transporter) {
       // Enviar con Nodemailer
       const mailOptions = {
         from: formattedFrom,
