@@ -1,3 +1,4 @@
+
 interface EmailRecipient {
   email: string;
   name?: string;
@@ -17,6 +18,7 @@ interface EmailResponse {
 }
 
 import { supabase } from "@/integrations/supabase/client";
+import { isProd } from "@/lib/utils";
 
 // API URL configuration
 const API_URL = isProd 
