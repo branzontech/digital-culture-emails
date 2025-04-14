@@ -1,13 +1,15 @@
 
 # Servidor de Envío de Correos
 
-Este es un servidor backend para manejar el envío seguro de correos electrónicos utilizando Mailgun.
+Este es un servidor backend para manejar el envío seguro de correos electrónicos con múltiples opciones:
+
+1. Nodemailer con SMTP (gratuito con servicios como Gmail)
+2. Mailgun (como opción de respaldo)
+3. Ethereal Email (para pruebas sin necesidad de cuenta real)
 
 ## Requisitos previos
 
 - Node.js y npm instalados
-- Una cuenta en Mailgun con un dominio verificado
-- API key de Mailgun
 
 ## Instalación
 
@@ -19,15 +21,27 @@ Este es un servidor backend para manejar el envío seguro de correos electrónic
 npm install
 ```
 
-4. Crear un archivo `.env` basado en `.env.example` y añadir tus credenciales:
+4. Crear un archivo `.env` basado en `.env.example` y configurar según tu preferencia:
 
 ```
 PORT=3000
 NODE_ENV=development
+
+# Opción 1: SMTP (recomendado para servicios gratuitos)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu-correo@gmail.com
+SMTP_PASS=tu-contraseña-o-contraseña-de-aplicación
+SMTP_SECURE=false
+
+# Opción 2: Mailgun (alternativa)
 MAILGUN_API_KEY=tu-api-key-de-mailgun
 MAILGUN_DOMAIN=tu-dominio-verificado-en-mailgun.com
+
 DEFAULT_FROM_EMAIL=noreply@tu-dominio.com
 ```
+
+> **Nota**: Si no configuras ninguna de las dos opciones, el sistema usará automáticamente Ethereal Email para pruebas, que te permite ver los correos enviados en una interfaz web sin necesidad de una cuenta real.
 
 ## Ejecución
 
