@@ -53,8 +53,10 @@ const TemplateSeven: React.FC<TemplateSevenProps> = ({
           fontWeight: "400", 
           margin: "0 0 15px 0",
           textShadow: "0px 1px 2px rgba(0,0,0,0.2)",
-          maxWidth: "400px",
-          margin: "0 auto"
+          // Fixed: removed duplicate margin property
+          marginLeft: "auto",
+          marginRight: "auto",
+          maxWidth: "400px"
         }}>
           {subheading || "Impulsa tu carrera con las nuevas tecnologías"}
         </h2>

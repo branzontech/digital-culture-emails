@@ -83,10 +83,13 @@ const TemplateEight: React.FC<TemplateEightProps> = ({
             color: "#E2E8F0", 
             fontSize: "18px", 
             fontWeight: "400", 
-            margin: "0",
+            // Fixed: removed duplicate margin property
+            marginTop: "0",
+            marginBottom: "0",
+            marginLeft: "auto",
+            marginRight: "auto",
             maxWidth: "450px",
-            lineHeight: "1.5",
-            margin: "0 auto"
+            lineHeight: "1.5"
           }}>
             {subheading || "Aprende desde cualquier lugar con nuestros eventos digitales"}
           </h2>
