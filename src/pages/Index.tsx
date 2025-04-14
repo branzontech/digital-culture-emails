@@ -1,5 +1,6 @@
 
 import EmailTemplateEditor from "@/components/EmailTemplateEditor";
+import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   return (
@@ -31,6 +32,8 @@ const Index = () => {
           <p>© 2025 Programa de Cultura Digital - Todos los derechos reservados</p>
         </div>
       </footer>
+      
+      <Toaster />
     </div>
   );
 };
