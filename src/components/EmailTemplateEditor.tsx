@@ -8,6 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TemplateOne from "./email-templates/TemplateOne";
 import TemplateTwo from "./email-templates/TemplateTwo";
 import TemplateThree from "./email-templates/TemplateThree";
+import TemplateFour from "./email-templates/TemplateFour";
+import TemplateFive from "./email-templates/TemplateFive";
+import TemplateSix from "./email-templates/TemplateSix";
 
 const EmailTemplateEditor = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("template1");
@@ -191,6 +194,27 @@ const EmailTemplateEditor = () => {
                 >
                   <span className="text-xs">Anuncios</span>
                 </Button>
+                <Button
+                  variant={selectedTemplate === "template4" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template4")}
+                >
+                  <span className="text-xs">Talleres</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template5" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template5")}
+                >
+                  <span className="text-xs">Tendencias</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template6" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template6")}
+                >
+                  <span className="text-xs">Políticas</span>
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -226,6 +250,39 @@ const EmailTemplateEditor = () => {
               )}
               {selectedTemplate === "template3" && (
                 <TemplateThree
+                  subject={templateContent.subject}
+                  heading={templateContent.heading}
+                  subheading={templateContent.subheading}
+                  content={templateContent.content}
+                  buttonText={templateContent.buttonText}
+                  buttonUrl={templateContent.buttonUrl}
+                  imageUrl={getCurrentImage()}
+                />
+              )}
+              {selectedTemplate === "template4" && (
+                <TemplateFour
+                  subject={templateContent.subject}
+                  heading={templateContent.heading}
+                  subheading={templateContent.subheading}
+                  content={templateContent.content}
+                  buttonText={templateContent.buttonText}
+                  buttonUrl={templateContent.buttonUrl}
+                  imageUrl={getCurrentImage()}
+                />
+              )}
+              {selectedTemplate === "template5" && (
+                <TemplateFive
+                  subject={templateContent.subject}
+                  heading={templateContent.heading}
+                  subheading={templateContent.subheading}
+                  content={templateContent.content}
+                  buttonText={templateContent.buttonText}
+                  buttonUrl={templateContent.buttonUrl}
+                  imageUrl={getCurrentImage()}
+                />
+              )}
+              {selectedTemplate === "template6" && (
+                <TemplateSix
                   subject={templateContent.subject}
                   heading={templateContent.heading}
                   subheading={templateContent.subheading}
