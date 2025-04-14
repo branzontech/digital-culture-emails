@@ -32,7 +32,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<{ success: b
       smtpConfig: {
         host: SMTP_HOST,
         port: SMTP_PORT,
-        secure: SMTP_PORT === 465, // Fix: Compare with number, not number literal type
+        secure: SMTP_PORT === 465, // Use runtime comparison
         auth: {
           user: SMTP_USER,
           // Password redacted for security
@@ -77,3 +77,4 @@ export const parseEmailList = (emailsString: string): EmailRecipient[] => {
     .filter(validateEmail)
     .map(email => ({ email }));
 };
+
