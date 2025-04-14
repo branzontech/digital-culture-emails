@@ -12,16 +12,50 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 
-// Configuración de CORS más permisiva para desarrollo
+// More permissive CORS configuration for development
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:5173',
+  'http://127.0.0.1:8080',
+  'http://127.0.0.1:5173',
+  // Add your Lovable project URLs here
+  'https://digital-culture-emails.lovable.app',
+  'https://affea7fe-578c-4cd9-8f3f-2cb3762c4cdc.lovableproject.com'
+];
+
+// Updated CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? true  // Permitir cualquier origen en producción, o especificar dominio exacto si es necesario
-    : ['http://localhost:8080', 'http://localhost:5173', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173'],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'production') {
+      callback(null, true);
+    } else {
+      console.warn(`Origin ${origin} not allowed by CORS policy`);
+      callback(null, true); // Still allow it for development flexibility
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept']
 }));
 
-// Agregar una ruta básica para verificar si el servidor está en funcionamiento
+// Add CORS headers to all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, Accept');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
+// Basic route to check if server is running
 app.get('/', (req, res) => {
   res.status(200).send('Servidor de correo electrónico funcionando correctamente');
 });
@@ -226,10 +260,14 @@ app.post('/api/send-email', async (req, res) => {
       throw new Error('No hay servicios de correo configurados');
     }
     
+    // Ensure CORS headers are set on the response
+    res.header('Access-Control-Allow-Origin', '*');
     res.status(200).json(result);
   } catch (error) {
     console.error('Error al enviar correo:', error);
     
+    // Ensure CORS headers are set on error responses too
+    res.header('Access-Control-Allow-Origin', '*');
     res.status(500).json({
       success: false,
       message: `Error al enviar el correo: ${error.message}`,

@@ -1,4 +1,3 @@
-
 interface EmailRecipient {
   email: string;
   name?: string;
@@ -19,68 +18,80 @@ interface EmailResponse {
 
 import { isProd } from "@/lib/utils";
 
-// Actualizamos la URL de API para que use el mismo dominio/puerto que el servidor backend
+// API URL configuration
 const API_URL = isProd 
-  ? "/api/send-email"  // En producción, usamos una ruta relativa
-  : "http://localhost:3000/api/send-email";  // URL para desarrollo local
+  ? "/api/send-email"  // Production - relative URL
+  : "http://localhost:3000/api/send-email";  // Development - explicit URL
+
+// Helper function to check if server is running
+const isServerRunning = async (): Promise<boolean> => {
+  try {
+    const testUrl = isProd ? window.location.origin : "http://localhost:3000";
+    
+    const response = await fetch(testUrl, {
+      method: 'HEAD',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+      },
+      signal: AbortSignal.timeout(3000), // 3 second timeout
+    });
+    
+    return response.ok;
+  } catch (error) {
+    console.error("Server connection check failed:", error);
+    return false;
+  }
+};
 
 export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
     console.log("Intentando enviar email con opciones:", {
       to: options.to,
       subject: options.subject,
-      // No logueamos el contenido HTML completo por brevedad
+      // Not logging full HTML content for brevity
       from: options.from,
     });
     
-    // Verificar si el servidor está en ejecución antes de enviar
-    try {
-      // Intenta hacer una conexión con timeout reducido para verificar rápidamente
-      const testConnection = API_URL.replace('/api/send-email', '');
-      const testUrl = isProd ? window.location.origin + testConnection : testConnection;
-      
-      const testResponse = await fetch(testUrl, {
-        method: 'HEAD',
-        signal: AbortSignal.timeout(2000), // 2 segundos de timeout
-      });
-      
-      if (!testResponse.ok) {
-        throw new Error('El servidor no respondió correctamente');
-      }
-    } catch (error) {
-      console.error("Error de conexión al servidor:", error);
+    // Check if server is running before attempting to send
+    const serverRunning = await isServerRunning();
+    if (!serverRunning) {
       return {
         success: false,
-        message: "No se pudo conectar al servidor de correo. Asegúrate de que el servidor backend esté en ejecución ejecutando 'cd server && npm run dev' en una terminal separada. También verifica que hayas creado el archivo .env con la API key de Resend."
+        message: `No se pudo conectar al servidor de correo. Por favor:
+          1. Asegúrate que el servidor backend esté ejecutándose (ejecuta 'cd server && npm run dev' en una terminal separada)
+          2. Verifica que el archivo .env con la API key de Resend exista en la carpeta server
+          3. Si estás en desarrollo local, verifica que estés usando http://localhost:8080 para acceder a la aplicación`
       };
     }
     
-    // Continuar con el envío del correo si la conexión funciona
+    // Send email if server is running
     try {
-      // Determinar la URL completa en base al entorno
+      // Build full API URL based on environment
       const fullApiUrl = isProd ? window.location.origin + API_URL : API_URL;
       
       const response = await fetch(fullApiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Origin": window.location.origin,
         },
+        mode: 'cors',
         body: JSON.stringify(options),
       });
       
-      // Primero verificar el tipo de contenido de la respuesta
+      // Handle response based on content type
       const contentType = response.headers.get("content-type");
       let data;
       
-      // Verificar si la respuesta es JSON antes de intentar parsearla
+      // Parse response based on content type
       if (contentType && contentType.includes("application/json")) {
         data = await response.json();
       } else {
-        // Si no es JSON, obtener el texto y manejarlo adecuadamente
+        // Handle non-JSON responses
         const textResponse = await response.text();
         console.log("Respuesta no JSON recibida:", textResponse);
         
-        // Intentar crear un objeto manualmente
         data = {
           message: response.ok 
             ? "Correo enviado exitosamente (respuesta no-JSON)" 
@@ -98,16 +109,16 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
         previewUrl: data.previewUrl
       };
     } catch (error) {
-      // Si es un error de red, proporcionar un mensaje más claro
+      // Handle specific network errors
       if (error instanceof TypeError && error.message.includes("NetworkError")) {
-        console.error("Error de conexión al servidor:", error);
+        console.error("Error de red al conectar con el servidor:", error);
         return {
           success: false,
-          message: "No se pudo conectar al servidor de correo. Asegúrate de que el servidor backend esté en ejecución ejecutando 'cd server && npm run dev' en una terminal separada."
+          message: "Error de CORS o conexión rechazada. Verifica que el servidor permita conexiones desde tu origen actual y que esté configurado correctamente."
         };
       }
       
-      // Otros errores
+      // Other errors
       throw error;
     }
   } catch (error) {
