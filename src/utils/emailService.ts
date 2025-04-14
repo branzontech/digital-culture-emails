@@ -11,6 +11,12 @@ interface EmailSendOptions {
   from?: EmailRecipient;
 }
 
+interface EmailResponse {
+  success: boolean;
+  message: string;
+  previewUrl?: string;
+}
+
 import { isProd } from "@/lib/utils";
 
 // La URL donde estará el endpoint de nuestro backend
@@ -18,7 +24,7 @@ const API_URL = isProd
   ? "https://tu-dominio-backend.com/api/send-email"  // Cambia esto por tu URL de producción
   : "http://localhost:3000/api/send-email";         // URL para desarrollo local
 
-export const sendEmail = async (options: EmailSendOptions): Promise<{ success: boolean; message: string }> => {
+export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
     console.log("Intentando enviar email con opciones:", {
       to: options.to,
@@ -27,25 +33,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<{ success: b
       from: options.from,
     });
     
-    // En modo desarrollo, simulamos el envío para facilitar pruebas
-    if (!isProd) {
-      // Simular una demora de red para dar feedback visual al usuario
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const recipients = Array.isArray(options.to) 
-        ? options.to.map(r => r.email).join(", ") 
-        : options.to.email;
-      
-      console.log("Simulando envío de correo en modo desarrollo");
-      
-      // Mostrar mensaje informativo en desarrollo
-      return {
-        success: true,
-        message: `DESARROLLO: Simulación de envío a ${recipients}. En producción, se enviará realmente a través del backend.`
-      };
-    }
-    
-    // En producción, enviar a través del backend
+    // En modo desarrollo, enviar a través del backend configurado
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -62,7 +50,8 @@ export const sendEmail = async (options: EmailSendOptions): Promise<{ success: b
     
     return {
       success: true,
-      message: data.message || "Correo enviado exitosamente"
+      message: data.message || "Correo enviado exitosamente",
+      previewUrl: data.previewUrl
     };
   } catch (error) {
     console.error("Error al procesar el envío de email:", error);

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Users, Send, Loader2 } from "lucide-react";
+import { Mail, Users, Send, Loader2, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TemplateOne from "./email-templates/TemplateOne";
 import TemplateTwo from "./email-templates/TemplateTwo";
@@ -13,6 +13,7 @@ import TemplateFour from "./email-templates/TemplateFour";
 import TemplateFive from "./email-templates/TemplateFive";
 import TemplateSix from "./email-templates/TemplateSix";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const EmailTemplateEditor = () => {
   const { toast } = useToast();
@@ -30,6 +31,7 @@ const EmailTemplateEditor = () => {
   const [emailTo, setEmailTo] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
   const [sendMode, setSendMode] = useState<"individual" | "bulk">("individual");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setTemplateContent({
@@ -135,6 +137,7 @@ const EmailTemplateEditor = () => {
     }
 
     setIsSending(true);
+    setPreviewUrl(null);
     
     try {
       const recipients = parseEmailList(emailTo);
@@ -161,6 +164,10 @@ const EmailTemplateEditor = () => {
           title: "¡Éxito!",
           description: result.message,
         });
+        
+        if (result.previewUrl) {
+          setPreviewUrl(result.previewUrl);
+        }
       } else {
         toast({
           title: "Error",
@@ -298,6 +305,24 @@ const EmailTemplateEditor = () => {
                 <TabsContent value="send" className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium">Envío de Correo</h3>
+                    
+                    {previewUrl && (
+                      <Alert className="mb-4 bg-blue-50 border-blue-200">
+                        <AlertTitle className="text-blue-700">Correo enviado correctamente</AlertTitle>
+                        <AlertDescription className="text-blue-600">
+                          <p className="mb-2">El correo ha sido enviado a través de nuestro servicio de prueba (Ethereal).</p>
+                          <a 
+                            href={previewUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center text-blue-700 hover:text-blue-900 font-semibold"
+                          >
+                            Ver cómo se ve el correo <ExternalLink className="ml-1 h-4 w-4" />
+                          </a>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    
                     <div className="flex space-x-2 mb-4">
                       <Button
                         variant={sendMode === "individual" ? "default" : "outline"}
@@ -347,11 +372,6 @@ const EmailTemplateEditor = () => {
                         </>
                       )}
                     </Button>
-                    
-                    <p className="text-xs text-gray-500 mt-2">
-                      Nota: En un entorno de producción, este proceso debería realizarse 
-                      a través de un servidor seguro para proteger las credenciales SMTP.
-                    </p>
                   </div>
                 </TabsContent>
               </Tabs>
