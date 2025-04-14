@@ -21,7 +21,7 @@ const TemplateThree: React.FC<TemplateThreeProps> = ({
   imageUrl,
 }) => {
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
       {/* Top Bar */}
       <div style={{ height: "10px", backgroundColor: "#0052A5" }}></div>
       
@@ -33,7 +33,7 @@ const TemplateThree: React.FC<TemplateThreeProps> = ({
         borderBottom: "3px dashed #FFD800"
       }}>
         <img 
-          src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
           alt="Cultura Digital" 
           style={{ height: "80px" }}
         />
@@ -62,7 +62,8 @@ const TemplateThree: React.FC<TemplateThreeProps> = ({
           color: "#0052A5", 
           fontSize: "24px", 
           textAlign: "center", 
-          margin: "0 0 10px 0" 
+          margin: "0 0 10px 0",
+          fontWeight: "600"
         }}>
           {heading || "Nueva Plataforma de Aprendizaje Digital"}
         </h2>

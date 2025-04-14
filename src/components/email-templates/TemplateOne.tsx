@@ -21,11 +21,11 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
   imageUrl,
 }) => {
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
       {/* Header */}
       <div style={{ textAlign: "center", padding: "20px 0", backgroundColor: "#0052A5" }}>
         <img 
-          src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
           alt="Cultura Digital" 
           style={{ height: "60px" }}
         />
@@ -41,12 +41,12 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
       {/* Main Content */}
       <div style={{ padding: "30px 20px", backgroundColor: "#ffffff" }}>
         {/* Title */}
-        <h1 style={{ color: "#0052A5", fontSize: "24px", marginTop: 0 }}>
+        <h1 style={{ color: "#0052A5", fontSize: "24px", marginTop: 0, fontWeight: "600" }}>
           {heading || "Tips de Tecnología de la Semana"}
         </h1>
         
         {/* Subtitle */}
-        <h3 style={{ color: "#555555", fontSize: "18px", marginBottom: "20px" }}>
+        <h3 style={{ color: "#555555", fontSize: "18px", marginBottom: "20px", fontWeight: "500" }}>
           {subheading || "Mejora tu productividad con estos consejos"}
         </h3>
         

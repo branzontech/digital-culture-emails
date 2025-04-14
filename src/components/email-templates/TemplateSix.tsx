@@ -21,7 +21,7 @@ const TemplateSix: React.FC<TemplateSixProps> = ({
   imageUrl,
 }) => {
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Trebuchet MS, Arial, sans-serif", backgroundColor: "#ffffff" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Inter', 'Trebuchet MS', Arial, sans-serif", backgroundColor: "#ffffff" }}>
       {/* Curved Header */}
       <div style={{ 
         backgroundColor: "#0052A5", 
@@ -31,7 +31,7 @@ const TemplateSix: React.FC<TemplateSixProps> = ({
         position: "relative"
       }}>
         <img 
-          src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
           alt="Cultura Digital" 
           style={{ height: "60px", marginBottom: "20px" }}
         />
@@ -82,7 +82,8 @@ const TemplateSix: React.FC<TemplateSixProps> = ({
         <h1 style={{ 
           color: "#0052A5", 
           fontSize: "26px", 
-          margin: "0 0 15px 0" 
+          margin: "0 0 15px 0",
+          fontWeight: "600"
         }}>
           {heading || "Actualización de Políticas Digitales"}
         </h1>
@@ -258,7 +259,7 @@ Estas medidas son esenciales para mantener la seguridad de nuestra información 
           marginBottom: "20px" 
         }}>
           <img 
-            src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+            src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
             alt="Cultura Digital" 
             style={{ height: "30px" }}
           />

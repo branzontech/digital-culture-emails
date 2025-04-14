@@ -21,15 +21,15 @@ const TemplateTwo: React.FC<TemplateTwoProps> = ({
   imageUrl,
 }) => {
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
       {/* Header */}
       <div style={{ backgroundColor: "#FFD800", textAlign: "center", padding: "30px 20px" }}>
         <img 
-          src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
           alt="Cultura Digital" 
           style={{ height: "70px" }}
         />
-        <h1 style={{ color: "#0052A5", fontSize: "28px", margin: "20px 0 5px 0" }}>
+        <h1 style={{ color: "#0052A5", fontSize: "28px", margin: "20px 0 5px 0", fontWeight: "600" }}>
           {heading || "Alerta de Ciber Seguridad"}
         </h1>
         <h2 style={{ color: "#0052A5", fontSize: "18px", fontWeight: "normal", margin: "0" }}>

@@ -3,13 +3,13 @@ import EmailTemplateEditor from "@/components/EmailTemplateEditor";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 font-poppins">
       <header className="bg-gradient-to-r from-[#0052A5] to-[#0066CC] text-white shadow-md">
         <div className="container mx-auto py-5 px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img 
-                src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+                src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
                 alt="Cultura Digital Logo" 
                 className="h-12" 
               />

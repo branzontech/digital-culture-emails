@@ -21,11 +21,11 @@ const TemplateFive: React.FC<TemplateFiveProps> = ({
   imageUrl,
 }) => {
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Segoe UI, Arial, sans-serif", backgroundColor: "#ffffff" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Roboto', 'Segoe UI', Arial, sans-serif", backgroundColor: "#ffffff" }}>
       {/* Header */}
       <div style={{ backgroundColor: "#ffffff", padding: "25px 30px", textAlign: "center" }}>
         <img 
-          src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
           alt="Cultura Digital" 
           style={{ height: "60px" }}
         />
@@ -49,7 +49,8 @@ const TemplateFive: React.FC<TemplateFiveProps> = ({
           color: "#0052A5", 
           fontSize: "28px", 
           margin: "0 0 15px 0",
-          letterSpacing: "0.5px"
+          letterSpacing: "0.5px",
+          fontWeight: "600"
         }}>
           {heading || "Conozca Las Nuevas Tendencias Tecnológicas"}
         </h1>

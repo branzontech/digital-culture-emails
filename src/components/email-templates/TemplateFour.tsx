@@ -21,7 +21,7 @@ const TemplateFour: React.FC<TemplateFourProps> = ({
   imageUrl,
 }) => {
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "Helvetica, Arial, sans-serif", backgroundColor: "#ffffff" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Montserrat', Helvetica, Arial, sans-serif", backgroundColor: "#ffffff" }}>
       {/* Top Bar */}
       <div style={{ backgroundColor: "#0052A5", height: "8px" }}></div>
       
@@ -35,11 +35,11 @@ const TemplateFour: React.FC<TemplateFourProps> = ({
         color: "white"
       }}>
         <img 
-          src="/lovable-uploads/0e574739-35fa-4928-81a5-e46995dd9ded.png" 
+          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
           alt="Cultura Digital" 
           style={{ height: "70px", marginBottom: "20px" }}
         />
-        <h1 style={{ fontSize: "32px", margin: "10px 0", textShadow: "1px 1px 3px rgba(0,0,0,0.3)" }}>
+        <h1 style={{ fontSize: "32px", margin: "10px 0", textShadow: "1px 1px 3px rgba(0,0,0,0.3)", fontWeight: "600" }}>
           {heading || "Taller Digital"}
         </h1>
         <h2 style={{ fontSize: "20px", fontWeight: "normal", margin: "0", opacity: "0.9", textShadow: "1px 1px 2px rgba(0,0,0,0.2)" }}>
@@ -99,7 +99,7 @@ El taller está diseñado para todos los niveles de experiencia y proporcionará
           borderRadius: "6px",
           marginBottom: "25px"
         }}>
-          <h3 style={{ margin: "0 0 15px 0", color: "#0052A5", fontSize: "18px" }}>Detalles del Evento</h3>
+          <h3 style={{ margin: "0 0 15px 0", color: "#0052A5", fontSize: "18px", fontWeight: "600" }}>Detalles del Evento</h3>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <tbody>
               <tr>
