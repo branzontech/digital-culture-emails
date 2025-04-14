@@ -1,5 +1,24 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { isProd } from "@/lib/utils";
+
+interface EmailRecipient {
+  email: string;
+  name?: string;
+}
+
+interface EmailSendOptions {
+  to: EmailRecipient | EmailRecipient[];
+  subject: string;
+  htmlContent: string;
+  from?: EmailRecipient;
+}
+
+interface EmailResponse {
+  success: boolean;
+  message: string;
+  previewUrl?: string;
+}
 
 export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
