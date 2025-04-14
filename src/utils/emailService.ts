@@ -20,32 +20,6 @@ interface EmailResponse {
 import { supabase } from "@/integrations/supabase/client";
 import { isProd } from "@/lib/utils";
 
-// API URL configuration
-const API_URL = isProd 
-  ? "/api/send-email"  // Production - relative URL
-  : "http://localhost:3000/api/send-email";  // Development - explicit URL
-
-// Helper function to check if server is running
-const isServerRunning = async (): Promise<boolean> => {
-  try {
-    const testUrl = isProd ? window.location.origin : "http://localhost:3000";
-    
-    const response = await fetch(testUrl, {
-      method: 'HEAD',
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-      },
-      signal: AbortSignal.timeout(3000), // 3 second timeout
-    });
-    
-    return response.ok;
-  } catch (error) {
-    console.error("Server connection check failed:", error);
-    return false;
-  }
-};
-
 export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
     console.log("Intentando enviar email con opciones:", {
@@ -63,6 +37,14 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       return {
         success: false,
         message: `Error al enviar el email: ${error.message}`
+      };
+    }
+
+    if (data?.error) {
+      console.error("Error del servicio de email:", data.error);
+      return {
+        success: false,
+        message: `Error del servicio de email: ${data.error}`
       };
     }
 

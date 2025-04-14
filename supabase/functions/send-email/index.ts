@@ -7,7 +7,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+// Check if the API key is available
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+if (!RESEND_API_KEY) {
+  console.error("RESEND_API_KEY is not set in the environment variables");
+}
+
+const resend = new Resend(RESEND_API_KEY);
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -16,6 +22,23 @@ serve(async (req) => {
   }
 
   try {
+    if (!RESEND_API_KEY) {
+      console.error("Cannot send email: RESEND_API_KEY is not set");
+      return new Response(
+        JSON.stringify({ 
+          error: "Email service configuration error: API key not set",
+          previewUrl: null // For testing mode
+        }), 
+        { 
+          status: 500,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          }
+        }
+      )
+    }
+
     const { to, subject, htmlContent, from } = await req.json()
 
     console.log("Attempting to send email with:", { to, subject, from })
