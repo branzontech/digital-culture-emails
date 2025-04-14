@@ -19,12 +19,13 @@ const SMTP_PORT = 587; // Puerto recomendado para Office 365 con TLS
 
 export const sendEmail = async (options: EmailSendOptions): Promise<{ success: boolean; message: string }> => {
   try {
-    // In a real implementation, this would make a secure API call to a backend service
-    // that handles the SMTP connection. Never expose SMTP credentials in frontend code.
+    // En la aplicación actual, estamos simulando el envío de correo
+    // En un entorno de producción real, esta función debería conectarse a un backend seguro
+    // que maneje la conexión SMTP
     
-    console.log("Sending email with options:", {
+    console.log("Intentando enviar email con opciones:", {
       ...options,
-      // Don't log sensitive credentials
+      // No mostrar credenciales sensibles en el log
       smtpConfig: {
         host: SMTP_HOST,
         port: SMTP_PORT,
@@ -36,25 +37,29 @@ export const sendEmail = async (options: EmailSendOptions): Promise<{ success: b
       }
     });
     
-    // For demonstration purposes, we're simulating a successful email send
-    // In production, this would be a real API call
+    // IMPORTANTE: Esta es una aplicación de demostración
+    // Actualmente no estamos enviando correos reales ya que eso requeriría:
+    // 1. Un servidor backend seguro para manejar credenciales SMTP
+    // 2. Configuración adecuada de CORS y seguridad
+    // 3. Posiblemente una API de servicio de correo como SendGrid, Mailgun, etc.
     
-    // Simulate network delay
+    // Simular una demora de red para dar feedback visual al usuario
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const recipients = Array.isArray(options.to) 
       ? options.to.map(r => r.email).join(", ") 
       : options.to.email;
     
+    // Mensaje más claro sobre la simulación
     return {
-      success: true,
-      message: `Email enviado exitosamente a ${recipients}`
+      success: false, // Cambiado a false para ser honesto con el usuario
+      message: `DEMOSTRACIÓN: El correo a ${recipients} no se ha enviado realmente. Esta es una simulación. Para implementar el envío real de correos, se requiere un backend seguro.`
     };
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error simulando envío de email:", error);
     return {
       success: false,
-      message: `Error al enviar el correo: ${error instanceof Error ? error.message : 'Error desconocido'}`
+      message: `Error en la simulación de envío: ${error instanceof Error ? error.message : 'Error desconocido'}`
     };
   }
 };
