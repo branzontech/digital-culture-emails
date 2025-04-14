@@ -41,11 +41,30 @@ serve(async (req) => {
 
     const { to, subject, htmlContent, from } = await req.json()
 
-    console.log("Attempting to send email with:", { to, subject, from })
+    // Format the 'from' properly - Resend requires a string
+    let fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
+    
+    // If 'from' is provided, format it as a string
+    if (from) {
+      if (typeof from === 'string') {
+        fromValue = from;
+      } else if (typeof from === 'object' && from.email) {
+        // Format as "Name <email>" if name exists, otherwise just email
+        fromValue = from.name 
+          ? `${from.name} <${from.email}>`
+          : from.email;
+      }
+    }
+
+    console.log("Attempting to send email with:", { 
+      to, 
+      subject, 
+      from: fromValue // Log the formatted 'from' value
+    });
     
     const data = await resend.emails.send({
-      from: from || "Programa Cultura Digital <onboarding@resend.dev>",
-      to: Array.isArray(to) ? to.map(r => r.email) : [to.email],
+      from: fromValue,
+      to: Array.isArray(to) ? to.map(r => typeof r === 'string' ? r : r.email) : [typeof to === 'string' ? to : to.email],
       subject,
       html: htmlContent,
     });
