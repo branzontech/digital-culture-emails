@@ -27,7 +27,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           error: "Email service configuration error: API key not set",
-          previewUrl: null // For testing mode
+          previewUrl: null
         }), 
         { 
           status: 500,
@@ -39,23 +39,24 @@ serve(async (req) => {
       )
     }
 
-    const { to, subject, htmlContent, from } = await req.json()
+    const { to, subject, htmlContent } = await req.json()
 
-    // Always use the Resend default email for sending
-    // This avoids domain verification issues
-    const fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
+    // Always use branzontech@gmail.com as the sender
+    const fromValue = "Programa Cultura Digital <branzontech@gmail.com>";
     
-    // Log the original 'from' request and what we're using
-    console.log("Email request with original from:", { 
+    // Ensure recipient is also branzontech@gmail.com during testing
+    const toAddress = "branzontech@gmail.com";
+    
+    console.log("Email request details:", { 
       to, 
       subject,
-      originalFrom: from,
-      usingFrom: fromValue
+      usingFrom: fromValue,
+      usingTo: toAddress
     });
     
     const data = await resend.emails.send({
       from: fromValue,
-      to: Array.isArray(to) ? to.map(r => typeof r === 'string' ? r : r.email) : [typeof to === 'string' ? to : to.email],
+      to: toAddress,
       subject,
       html: htmlContent,
     });
@@ -85,3 +86,4 @@ serve(async (req) => {
     )
   }
 })
+

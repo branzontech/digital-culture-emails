@@ -25,12 +25,15 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     console.log("Intentando enviar email con opciones:", {
       to: options.to,
       subject: options.subject,
-      from: options.from,
+      from: { email: "branzontech@gmail.com", name: "Programa Cultura Digital" },
     });
     
-    // Note: 'from' will be replaced with the default Resend email in the edge function
     const { data, error } = await supabase.functions.invoke('send-email', {
-      body: options
+      body: {
+        to: options.to,
+        subject: options.subject,
+        htmlContent: options.htmlContent
+      }
     });
 
     if (error) {
@@ -51,7 +54,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
 
     return {
       success: true,
-      message: "Correo enviado exitosamente desde onboarding@resend.dev",
+      message: "Correo enviado exitosamente a branzontech@gmail.com",
       previewUrl: data?.previewUrl
     };
   } catch (error) {
