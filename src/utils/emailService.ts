@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { isProd } from "@/lib/utils";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import TemplateOne from "@/components/email-templates/TemplateOne";
@@ -56,6 +55,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       try {
         // Generate HTML from the selected template component
         const templateComponent = getTemplateComponent(options.templateId, options.templateProps);
+        // Make sure we don't render on the client side
         finalHtmlContent = ReactDOMServer.renderToString(templateComponent);
         
         // Wrap the template with proper HTML document structure
