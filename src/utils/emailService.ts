@@ -66,11 +66,13 @@ const convertImageToBase64 = async (imageUrl: string): Promise<string> => {
     const base64 = btoa(binary);
     
     // Determine MIME type from URL or response
-    const contentType = response.headers.get('content-type') || 
-      imageUrl.endsWith('.svg') ? 'image/svg+xml' : 
-      imageUrl.endsWith('.png') ? 'image/png' : 
-      imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg') ? 'image/jpeg' : 
-      'image/png';
+    let contentType = response.headers.get('content-type');
+    if (!contentType) {
+      if (imageUrl.endsWith('.svg')) contentType = 'image/svg+xml';
+      else if (imageUrl.endsWith('.png')) contentType = 'image/png';
+      else if (imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg')) contentType = 'image/jpeg';
+      else contentType = 'image/png';
+    }
     
     return `data:${contentType};base64,${base64}`;
   } catch (error) {
@@ -85,6 +87,15 @@ const processTemplateProps = async (props: any): Promise<any> => {
   
   if (props.imageUrl) {
     processedProps.imageUrl = await convertImageToBase64(props.imageUrl);
+  }
+  
+  // También convertimos el logo de Cultura Digital a base64
+  try {
+    const logoUrl = "https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg";
+    processedProps.logoBase64 = await convertImageToBase64(logoUrl);
+  } catch (error) {
+    console.error('Error al convertir el logo:', error);
+    // Si falla, igual continuamos con el resto del proceso
   }
   
   return processedProps;
@@ -109,7 +120,8 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
         // Generate HTML from the selected template component with processed props
         const templateComponent = getTemplateComponent(options.templateId, processedProps);
         
-        // Server-side rendering with optimized settings
+        // Server-side rendering with optimized settings - IMPORTANTE: cambiamos a renderToStaticMarkup
+        // para que no incluya los atributos de React que causan problemas en clientes de correo
         finalHtmlContent = ReactDOMServer.renderToStaticMarkup(templateComponent);
         
         // Wrap the template with proper HTML document structure

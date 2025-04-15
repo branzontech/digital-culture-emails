@@ -9,6 +9,7 @@ interface TemplateOneProps {
   buttonText: string;
   buttonUrl: string;
   imageUrl: string;
+  logoBase64?: string; // Nuevo prop para el logo en base64
 }
 
 const TemplateOne: React.FC<TemplateOneProps> = ({
@@ -19,13 +20,17 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
   buttonText,
   buttonUrl,
   imageUrl,
+  logoBase64,
 }) => {
+  // Usamos el logo en base64 si está disponible, de lo contrario usamos la URL directa
+  const logoSrc = logoBase64 || "https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg";
+  
   return (
     <div style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
       {/* Header */}
       <div style={{ textAlign: "center", padding: "20px 0", backgroundColor: "#0052A5" }}>
         <img 
-          src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
+          src={logoSrc}
           alt="Cultura Digital" 
           style={{ height: "60px" }}
         />
