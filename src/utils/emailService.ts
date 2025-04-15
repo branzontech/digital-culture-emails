@@ -55,7 +55,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       try {
         // Generate HTML from the selected template component
         const templateComponent = getTemplateComponent(options.templateId, options.templateProps);
-        // Make sure we don't render on the client side
+        // Server-side rendering - avoiding client-side rendering issues
         finalHtmlContent = ReactDOMServer.renderToString(templateComponent);
         
         // Wrap the template with proper HTML document structure
