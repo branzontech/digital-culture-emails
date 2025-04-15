@@ -25,9 +25,9 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
   const logoSrc = logoBase64 || "https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg";
   
   return (
-    <table cellPadding="0" cellSpacing="0" border="0" width="100%" style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
+    <table cellPadding={0} cellSpacing={0} border={0} width="100%" style={{ maxWidth: "600px", margin: "0 auto", fontFamily: "'Poppins', 'Segoe UI', Arial, sans-serif" }}>
       <tr>
-        <td align="center" bgcolor="#0052A5" style={{ padding: "20px 0" }}>
+        <td align="center" style={{ backgroundColor: "#0052A5", padding: "20px 0" }}>
           <img 
             src={logoSrc}
             alt="Cultura Digital" 
@@ -37,7 +37,7 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
       </tr>
       
       <tr>
-        <td bgcolor="#f0f0f0" style={{ padding: "15px", borderBottom: "3px solid #FFD800" }}>
+        <td style={{ backgroundColor: "#f0f0f0", padding: "15px", borderBottom: "3px solid #FFD800" }}>
           <h2 style={{ margin: 0, color: "#0052A5", fontSize: "18px" }}>
             {subject || "Consejos y Tips de Tecnología - Cultura Digital"}
           </h2>
@@ -45,7 +45,7 @@ const TemplateOne: React.FC<TemplateOneProps> = ({
       </tr>
       
       <tr>
-        <td bgcolor="#ffffff" style={{ padding: "30px 20px" }}>
+        <td style={{ backgroundColor: "#ffffff", padding: "30px 20px" }}>
           <h1 style={{ color: "#0052A5", fontSize: "24px", marginTop: 0, fontWeight: "600" }}>
             {heading || "Tips de Tecnología de la Semana"}
           </h1>
@@ -93,7 +93,7 @@ Compartimos con ustedes los tips tecnológicos de esta semana que ayudarán a me
       </tr>
       
       <tr>
-        <td bgcolor="#0052A5" style={{ padding: "20px", color: "white", textAlign: "center" }}>
+        <td style={{ backgroundColor: "#0052A5", padding: "20px", color: "white", textAlign: "center" }}>
           <p style={{ margin: "0 0 10px 0", fontSize: "14px" }}>
             © 2025 Cultura Digital - Todos los derechos reservados
           </p>
