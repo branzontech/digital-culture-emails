@@ -40,8 +40,8 @@ serve(async (req) => {
 
     const { to, subject, htmlContent } = await req.json()
 
-    // Always use branzontech@gmail.com as the sender
-    const fromValue = "Programa Cultura Digital <branzontech@gmail.com>";
+    // Use the default Resend from address which is already verified
+    const fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
     
     // Ensure recipient is also branzontech@gmail.com during testing
     const toAddress = "branzontech@gmail.com";

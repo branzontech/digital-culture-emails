@@ -25,7 +25,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     console.log("Intentando enviar email con opciones:", {
       to: options.to,
       subject: options.subject,
-      from: { email: "branzontech@gmail.com", name: "Programa Cultura Digital" },
+      from: { email: "onboarding@resend.dev", name: "Programa Cultura Digital" },
     });
     
     const { data, error } = await supabase.functions.invoke('send-email', {
