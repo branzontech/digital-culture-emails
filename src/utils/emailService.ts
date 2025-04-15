@@ -2,7 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { isProd } from "@/lib/utils";
 import React from "react";
-import ReactDOMServer from "react-dom/server";
+import { renderToString } from "react-dom/server";
 import TemplateOne from "@/components/email-templates/TemplateOne";
 import TemplateTwo from "@/components/email-templates/TemplateTwo";
 import TemplateThree from "@/components/email-templates/TemplateThree";
@@ -55,7 +55,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     if (options.templateId && options.templateProps) {
       // Generate HTML from the selected template component
       const templateComponent = getTemplateComponent(options.templateId, options.templateProps);
-      finalHtmlContent = ReactDOMServer.renderToString(templateComponent);
+      finalHtmlContent = renderToString(templateComponent);
       
       // Wrap the template with proper HTML document structure
       finalHtmlContent = `
