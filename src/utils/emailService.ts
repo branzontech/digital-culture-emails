@@ -86,7 +86,12 @@ const processTemplateProps = async (props: any): Promise<any> => {
   const processedProps = { ...props };
   
   if (props.imageUrl) {
-    processedProps.imageUrl = await convertImageToBase64(props.imageUrl);
+    try {
+      processedProps.imageUrl = await convertImageToBase64(props.imageUrl);
+    } catch (error) {
+      console.error('Error al convertir imagen principal:', error);
+      processedProps.imageUrl = props.imageUrl; // Fallback to original URL
+    }
   }
   
   // También convertimos el logo de Cultura Digital a base64
@@ -120,8 +125,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
         // Generate HTML from the selected template component with processed props
         const templateComponent = getTemplateComponent(options.templateId, processedProps);
         
-        // Server-side rendering with optimized settings - IMPORTANTE: cambiamos a renderToStaticMarkup
-        // para que no incluya los atributos de React que causan problemas en clientes de correo
+        // Use renderToStaticMarkup to ensure clean HTML without React attributes
         finalHtmlContent = ReactDOMServer.renderToStaticMarkup(templateComponent);
         
         // Wrap the template with proper HTML document structure
@@ -131,6 +135,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
             <title>${options.subject}</title>
             <style>
@@ -145,6 +150,18 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
                 max-width: 100%;
                 height: auto;
                 display: block;
+                border: 0;
+                outline: none;
+              }
+              a {
+                text-decoration: none;
+              }
+              p {
+                margin-top: 0;
+                margin-bottom: 1rem;
+              }
+              * {
+                box-sizing: border-box;
               }
             </style>
           </head>
