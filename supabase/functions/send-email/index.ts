@@ -40,42 +40,61 @@ serve(async (req) => {
 
     const { to, subject, htmlContent } = await req.json()
 
+    // Log content length to help with debugging
+    console.log("Received email request:", {
+      subject,
+      htmlContentLength: htmlContent ? htmlContent.length : 0,
+      toEmail: to?.email || (Array.isArray(to) ? to.map(t => t.email).join(', ') : to)
+    });
+
     // Use the default Resend from address which is already verified
     const fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
     
-    // Ensure recipient is also branzontech@gmail.com during testing
+    // During testing, always send to this email
     const toAddress = "branzontech@gmail.com";
     
-    console.log("Email request details:", { 
-      to, 
-      subject,
-      usingFrom: fromValue,
-      usingTo: toAddress,
-      htmlContentLength: htmlContent.length
-    });
-    
-    const data = await resend.emails.send({
-      from: fromValue,
-      to: toAddress,
-      subject,
-      html: htmlContent,
-    });
+    try {
+      const data = await resend.emails.send({
+        from: fromValue,
+        to: toAddress,
+        subject,
+        html: htmlContent,
+      });
 
-    console.log("Email sent successfully:", data)
+      console.log("Email sent successfully:", data);
 
-    return new Response(
-      JSON.stringify(data),
-      { 
-        headers: { 
-          "Content-Type": "application/json",
-          ...corsHeaders
-        } 
-      },
-    )
+      return new Response(
+        JSON.stringify(data),
+        { 
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          } 
+        },
+      );
+    } catch (sendError) {
+      console.error("Error sending email with Resend:", sendError);
+      return new Response(
+        JSON.stringify({ 
+          error: sendError.message || "Error sending email",
+          details: sendError
+        }), 
+        { 
+          status: 500,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders
+          }
+        }
+      );
+    }
   } catch (error) {
-    console.error("Error sending email:", error)
+    console.error("Error processing request:", error);
     return new Response(
-      JSON.stringify({ error: error.message }), 
+      JSON.stringify({ 
+        error: error.message || "Unknown error", 
+        stack: error.stack
+      }), 
       { 
         status: 500,
         headers: { 
@@ -83,6 +102,6 @@ serve(async (req) => {
           ...corsHeaders
         }
       }
-    )
+    );
   }
 })

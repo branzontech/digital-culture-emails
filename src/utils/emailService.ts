@@ -53,25 +53,36 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     let finalHtmlContent = options.htmlContent;
     
     if (options.templateId && options.templateProps) {
-      // Generate HTML from the selected template component
-      const templateComponent = getTemplateComponent(options.templateId, options.templateProps);
-      finalHtmlContent = renderToString(templateComponent);
-      
-      // Wrap the template with proper HTML document structure
-      finalHtmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-          <title>${options.subject}</title>
-        </head>
-        <body style="margin: 0; padding: 0; font-family: 'Poppins', sans-serif;">
-          ${finalHtmlContent}
-        </body>
-        </html>
-      `;
+      try {
+        // Generate HTML from the selected template component
+        const templateComponent = getTemplateComponent(options.templateId, options.templateProps);
+        finalHtmlContent = renderToString(templateComponent);
+        
+        // Wrap the template with proper HTML document structure
+        finalHtmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+            <title>${options.subject}</title>
+          </head>
+          <body style="margin: 0; padding: 0; font-family: 'Poppins', sans-serif;">
+            ${finalHtmlContent}
+          </body>
+          </html>
+        `;
+      } catch (renderError) {
+        console.error("Error al renderizar la plantilla:", renderError);
+        // Fallback to a basic HTML if rendering fails
+        finalHtmlContent = `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1>${options.subject}</h1>
+            <p>${options.templateProps?.content || "No se pudo cargar el contenido de la plantilla."}</p>
+          </div>
+        `;
+      }
     }
     
     const { data, error } = await supabase.functions.invoke('send-email', {
