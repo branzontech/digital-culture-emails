@@ -7,7 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Check if the API key is available
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) {
   console.error("RESEND_API_KEY is not set in the environment variables");
@@ -86,4 +85,3 @@ serve(async (req) => {
     )
   }
 })
-
