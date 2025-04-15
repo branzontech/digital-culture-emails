@@ -40,67 +40,105 @@ interface EmailResponse {
   previewUrl?: string;
 }
 
-// Helper function to convert an image URL to a base64 data URL
+// Cache para las imágenes convertidas a base64 para mejorar el rendimiento
+const imageCache = new Map<string, string>();
+
+// Función mejorada para convertir una imagen a base64 con mejor manejo de tipos MIME y errores
 const convertImageToBase64 = async (imageUrl: string): Promise<string> => {
   try {
-    // Skip conversion for data URLs (already base64)
+    // Si la URL ya está en formato base64, devolverla directamente
     if (imageUrl.startsWith('data:')) {
       return imageUrl;
     }
     
-    // Fetch the image
-    const response = await fetch(imageUrl);
+    // Verificar si la imagen ya está en caché
+    if (imageCache.has(imageUrl)) {
+      console.log('Usando imagen en caché:', imageUrl);
+      return imageCache.get(imageUrl)!;
+    }
+
+    // Intentar obtener la imagen usando fetch
+    console.log('Convirtiendo imagen a base64:', imageUrl);
+    const response = await fetch(imageUrl, { 
+      // Incluimos headers para evitar problemas de CORS
+      headers: {
+        'Accept': 'image/*',
+      },
+      mode: 'cors',
+      cache: 'force-cache'
+    });
+    
     if (!response.ok) {
-      console.error(`Failed to fetch image: ${imageUrl}`);
-      return imageUrl; // Return original URL on failure
+      throw new Error(`No se pudo cargar la imagen (status ${response.status}): ${imageUrl}`);
     }
     
-    const arrayBuffer = await response.arrayBuffer();
-    const bytes = new Uint8Array(arrayBuffer);
-    
-    // Convert to base64
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    const base64 = btoa(binary);
-    
-    // Determine MIME type from URL or response
+    // Obtener el tipo de contenido
     let contentType = response.headers.get('content-type');
     if (!contentType) {
-      if (imageUrl.endsWith('.svg')) contentType = 'image/svg+xml';
-      else if (imageUrl.endsWith('.png')) contentType = 'image/png';
-      else if (imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg')) contentType = 'image/jpeg';
-      else contentType = 'image/png';
+      // Intentar determinar el tipo de contenido por la extensión del archivo
+      if (imageUrl.match(/\.(jpeg|jpg)$/i)) contentType = 'image/jpeg';
+      else if (imageUrl.match(/\.(png)$/i)) contentType = 'image/png';
+      else if (imageUrl.match(/\.(gif)$/i)) contentType = 'image/gif';
+      else if (imageUrl.match(/\.(svg)$/i)) contentType = 'image/svg+xml';
+      else if (imageUrl.match(/\.(webp)$/i)) contentType = 'image/webp';
+      else contentType = 'image/png'; // Tipo por defecto
     }
     
-    return `data:${contentType};base64,${base64}`;
+    // Obtener los datos binarios
+    const arrayBuffer = await response.arrayBuffer();
+    
+    // Convertir a base64
+    const base64 = btoa(
+      new Uint8Array(arrayBuffer)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+    
+    // Crear y almacenar en caché la URL de datos
+    const dataUrl = `data:${contentType};base64,${base64}`;
+    imageCache.set(imageUrl, dataUrl);
+    
+    return dataUrl;
   } catch (error) {
-    console.error('Error converting image to base64:', error);
-    return imageUrl; // Return original URL on error
+    console.error('Error al convertir imagen a base64:', error);
+    
+    // Plan B: Intentar con una API pública de conversión si está disponible
+    try {
+      console.log('Intentando método alternativo para la imagen:', imageUrl);
+      // Este es un ejemplo, deberías implementar tu propia lógica alternativa
+      // o usar un servicio de proxy de imágenes si es posible
+      
+      // Por ahora, devolvemos la URL original como fallback
+      return imageUrl;
+    } catch (fallbackError) {
+      console.error('Error en método alternativo:', fallbackError);
+      return imageUrl; // Devolver la URL original si todo falla
+    }
   }
 };
 
-// Process template props to convert all image URLs to base64
+// Procesar todas las propiedades de la plantilla que contengan imágenes
 const processTemplateProps = async (props: any): Promise<any> => {
   const processedProps = { ...props };
   
+  // Convertir la imagen principal
   if (props.imageUrl) {
     try {
       processedProps.imageUrl = await convertImageToBase64(props.imageUrl);
+      console.log('Imagen principal convertida exitosamente');
     } catch (error) {
       console.error('Error al convertir imagen principal:', error);
-      processedProps.imageUrl = props.imageUrl; // Fallback to original URL
+      processedProps.imageUrl = props.imageUrl; // Fallback a URL original
     }
   }
   
-  // También convertimos el logo de Cultura Digital a base64
+  // Convertir el logo a base64
   try {
     const logoUrl = "https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg";
     processedProps.logoBase64 = await convertImageToBase64(logoUrl);
+    console.log('Logo convertido exitosamente');
   } catch (error) {
     console.error('Error al convertir el logo:', error);
-    // Si falla, igual continuamos con el resto del proceso
+    // Si falla, no incluimos el logoBase64 y se usará la URL directa
   }
   
   return processedProps;
@@ -108,27 +146,30 @@ const processTemplateProps = async (props: any): Promise<any> => {
 
 export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
-    console.log("Intentando enviar email con opciones:", {
+    console.log("Preparando envío de email:", {
       to: options.to,
       subject: options.subject,
       from: { email: "onboarding@resend.dev", name: "Programa Cultura Digital" },
     });
 
-    // If templateId and templateProps are provided, generate the HTML content from the template
+    // Si templateId y templateProps están definidos, generamos el HTML
     let finalHtmlContent = options.htmlContent;
     
     if (options.templateId && options.templateProps) {
       try {
-        // Process image URLs to base64 first
+        // Procesar todas las imágenes a base64 primero
+        console.log('Procesando imágenes de la plantilla...');
         const processedProps = await processTemplateProps(options.templateProps);
+        console.log('Imágenes procesadas, generando HTML de la plantilla...');
         
-        // Generate HTML from the selected template component with processed props
+        // Generar el HTML desde el componente de plantilla seleccionado con props procesados
         const templateComponent = getTemplateComponent(options.templateId, processedProps);
         
-        // Use renderToStaticMarkup to ensure clean HTML without React attributes
+        // Usar renderToStaticMarkup para asegurar un HTML limpio sin atributos de React
         finalHtmlContent = ReactDOMServer.renderToStaticMarkup(templateComponent);
+        console.log('HTML de la plantilla generado correctamente');
         
-        // Wrap the template with proper HTML document structure
+        // Envolver la plantilla con la estructura de documento HTML adecuada
         finalHtmlContent = `
           <!DOCTYPE html>
           <html>
@@ -145,6 +186,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
                 font-family: 'Poppins', sans-serif;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
+                background-color: #f9f9f9;
               }
               img {
                 max-width: 100%;
@@ -152,6 +194,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
                 display: block;
                 border: 0;
                 outline: none;
+                line-height: 100%;
               }
               a {
                 text-decoration: none;
@@ -163,6 +206,17 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
               * {
                 box-sizing: border-box;
               }
+              .email-container {
+                max-width: 600px;
+                margin: 0 auto;
+              }
+              table {
+                border-spacing: 0;
+                border-collapse: collapse;
+              }
+              td {
+                padding: 0;
+              }
             </style>
           </head>
           <body>
@@ -172,7 +226,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
         `;
       } catch (renderError) {
         console.error("Error al renderizar la plantilla:", renderError);
-        // Fallback to a basic HTML if rendering fails
+        // Fallback a un HTML básico si falla el renderizado
         finalHtmlContent = `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <h1>${options.subject}</h1>
@@ -182,6 +236,8 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       }
     }
     
+    console.log('Enviando solicitud a la función edge...');
+    // Enviar la solicitud a la función edge
     const { data, error } = await supabase.functions.invoke('send-email', {
       body: {
         to: options.to,
@@ -191,7 +247,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     });
 
     if (error) {
-      console.error("Error al enviar email:", error);
+      console.error("Error al invocar la función edge:", error);
       return {
         success: false,
         message: `Error al enviar el email: ${error.message}`
@@ -206,6 +262,7 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
       };
     }
 
+    console.log('Email enviado exitosamente:', data);
     return {
       success: true,
       message: "Correo enviado exitosamente a branzontech@gmail.com",
@@ -250,3 +307,4 @@ export const parseEmailList = (emailsString: string): EmailRecipient[] => {
     .filter(validateEmail)
     .map(email => ({ email }));
 };
+

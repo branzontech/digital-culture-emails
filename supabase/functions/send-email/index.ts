@@ -47,10 +47,17 @@ serve(async (req) => {
       toEmail: to?.email || (Array.isArray(to) ? to.map(t => t.email).join(', ') : to)
     });
 
+    // Verificar que el HTML esté bien formado y asegurarse de que no contengan atributos de React
+    let cleanHtml = htmlContent;
+    
+    // Eliminar cualquier atributo data-lov-id o data-component-path que pudiera haberse colado
+    cleanHtml = cleanHtml.replace(/data-lov-id="[^"]*"/g, "");
+    cleanHtml = cleanHtml.replace(/data-component-path="[^"]*"/g, "");
+    
     // Use the default Resend from address which is already verified
     const fromValue = "Programa Cultura Digital <onboarding@resend.dev>";
     
-    // During testing, always send to this email
+    // Durante pruebas, siempre enviar a esta dirección
     const toAddress = "branzontech@gmail.com";
     
     try {
@@ -58,7 +65,7 @@ serve(async (req) => {
         from: fromValue,
         to: toAddress,
         subject,
-        html: htmlContent,
+        html: cleanHtml,
       });
 
       console.log("Email sent successfully:", data);
