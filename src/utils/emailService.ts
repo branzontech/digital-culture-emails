@@ -40,6 +40,56 @@ interface EmailResponse {
   previewUrl?: string;
 }
 
+// Helper function to convert an image URL to a base64 data URL
+const convertImageToBase64 = async (imageUrl: string): Promise<string> => {
+  try {
+    // Skip conversion for data URLs (already base64)
+    if (imageUrl.startsWith('data:')) {
+      return imageUrl;
+    }
+    
+    // Fetch the image
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      console.error(`Failed to fetch image: ${imageUrl}`);
+      return imageUrl; // Return original URL on failure
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    
+    // Convert to base64
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
+    
+    // Determine MIME type from URL or response
+    const contentType = response.headers.get('content-type') || 
+      imageUrl.endsWith('.svg') ? 'image/svg+xml' : 
+      imageUrl.endsWith('.png') ? 'image/png' : 
+      imageUrl.endsWith('.jpg') || imageUrl.endsWith('.jpeg') ? 'image/jpeg' : 
+      'image/png';
+    
+    return `data:${contentType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return imageUrl; // Return original URL on error
+  }
+};
+
+// Process template props to convert all image URLs to base64
+const processTemplateProps = async (props: any): Promise<any> => {
+  const processedProps = { ...props };
+  
+  if (props.imageUrl) {
+    processedProps.imageUrl = await convertImageToBase64(props.imageUrl);
+  }
+  
+  return processedProps;
+};
+
 export const sendEmail = async (options: EmailSendOptions): Promise<EmailResponse> => {
   try {
     console.log("Intentando enviar email con opciones:", {
@@ -53,10 +103,14 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
     
     if (options.templateId && options.templateProps) {
       try {
-        // Generate HTML from the selected template component
-        const templateComponent = getTemplateComponent(options.templateId, options.templateProps);
-        // Server-side rendering - avoiding client-side rendering issues
-        finalHtmlContent = ReactDOMServer.renderToString(templateComponent);
+        // Process image URLs to base64 first
+        const processedProps = await processTemplateProps(options.templateProps);
+        
+        // Generate HTML from the selected template component with processed props
+        const templateComponent = getTemplateComponent(options.templateId, processedProps);
+        
+        // Server-side rendering with optimized settings
+        finalHtmlContent = ReactDOMServer.renderToStaticMarkup(templateComponent);
         
         // Wrap the template with proper HTML document structure
         finalHtmlContent = `
@@ -67,8 +121,22 @@ export const sendEmail = async (options: EmailSendOptions): Promise<EmailRespons
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
             <title>${options.subject}</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Poppins', sans-serif;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+              }
+              img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+              }
+            </style>
           </head>
-          <body style="margin: 0; padding: 0; font-family: 'Poppins', sans-serif;">
+          <body>
             ${finalHtmlContent}
           </body>
           </html>
