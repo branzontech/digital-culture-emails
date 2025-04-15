@@ -50,7 +50,8 @@ serve(async (req) => {
       to, 
       subject,
       usingFrom: fromValue,
-      usingTo: toAddress
+      usingTo: toAddress,
+      htmlContentLength: htmlContent.length
     });
     
     const data = await resend.emails.send({

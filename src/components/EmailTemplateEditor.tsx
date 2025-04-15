@@ -159,11 +159,21 @@ const EmailTemplateEditor = () => {
         return;
       }
 
+      // Send the email with the selected template
       const result = await sendEmail({
         to: sendMode === "individual" ? recipients[0] : recipients,
         subject: templateContent.subject,
-        htmlContent: getHtmlContent(),
-        from: { email: "soporteit@cuidadoseguro.com.co", name: "Programa Cultura Digital" }
+        htmlContent: "", // We'll generate this in the service
+        templateId: selectedTemplate,
+        templateProps: {
+          subject: templateContent.subject,
+          heading: templateContent.heading,
+          subheading: templateContent.subheading,
+          content: templateContent.content,
+          buttonText: templateContent.buttonText,
+          buttonUrl: templateContent.buttonUrl,
+          imageUrl: getCurrentImage(),
+        }
       });
 
       if (result.success) {
