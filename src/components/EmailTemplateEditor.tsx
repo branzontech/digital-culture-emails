@@ -86,6 +86,11 @@ const EmailTemplateEditor = () => {
       case "template7": return <TemplateSeven {...templateProps} />;
       case "template8": return <TemplateEight {...templateProps} />;
       case "template9": return <TemplateNine {...templateProps} />;
+      case "template13": return <TemplateThirteen {...templateProps} />;
+      case "template14": return <TemplateFourteen {...templateProps} />;
+      case "template15": return <TemplateFifteen {...templateProps} />;
+      case "template16": return <TemplateSixteen {...templateProps} />;
+      case "template17": return <TemplateSeventeen {...templateProps} />;
       default: return <TemplateOne {...templateProps} />;
     }
   };
@@ -468,7 +473,6 @@ const EmailTemplateEditor = () => {
                 >
                   <span className="text-xs">Políticas</span>
                 </Button>
-                {/* New template buttons */}
                 <Button
                   variant={selectedTemplate === "template7" ? "default" : "outline"}
                   className="h-auto p-4 flex flex-col"
@@ -489,6 +493,42 @@ const EmailTemplateEditor = () => {
                   onClick={() => setSelectedTemplate("template9")}
                 >
                   <span className="text-xs">Innovación</span>
+                </Button>
+                {/* New template buttons */}
+                <Button
+                  variant={selectedTemplate === "template13" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template13")}
+                >
+                  <span className="text-xs">Moderna</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template14" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template14")}
+                >
+                  <span className="text-xs">Elegante</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template15" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template15")}
+                >
+                  <span className="text-xs">Dinámica</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template16" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template16")}
+                >
+                  <span className="text-xs">Creativa</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template17" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template17")}
+                >
+                  <span className="text-xs">Minimalista</span>
                 </Button>
               </div>
             </CardContent>
