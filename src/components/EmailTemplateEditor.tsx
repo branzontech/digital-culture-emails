@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +15,9 @@ import TemplateSix from "./email-templates/TemplateSix";
 import TemplateSeven from "./email-templates/TemplateSeven";
 import TemplateEight from "./email-templates/TemplateEight";
 import TemplateNine from "./email-templates/TemplateNine";
+import ThirteenTemplate from "./email-templates/ThirteenTemplate";
+import FourteenTemplate from "./email-templates/FourteenTemplate";
+import FifteenTemplate from "./email-templates/FifteenTemplate";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -82,6 +84,9 @@ const EmailTemplateEditor = () => {
       case "template7": return <TemplateSeven {...templateProps} />;
       case "template8": return <TemplateEight {...templateProps} />;
       case "template9": return <TemplateNine {...templateProps} />;
+      case "template13": return <ThirteenTemplate {...templateProps} />;
+      case "template14": return <FourteenTemplate {...templateProps} />;
+      case "template15": return <FifteenTemplate {...templateProps} />;
       default: return <TemplateOne {...templateProps} />;
     }
   };
@@ -159,7 +164,6 @@ const EmailTemplateEditor = () => {
         return;
       }
 
-      // Send the email with the selected template
       const result = await sendEmail({
         to: sendMode === "individual" ? recipients[0] : recipients,
         subject: templateContent.subject,
@@ -443,7 +447,6 @@ const EmailTemplateEditor = () => {
                 >
                   <span className="text-xs">Políticas</span>
                 </Button>
-                {/* New template buttons */}
                 <Button
                   variant={selectedTemplate === "template7" ? "default" : "outline"}
                   className="h-auto p-4 flex flex-col"
@@ -464,6 +467,27 @@ const EmailTemplateEditor = () => {
                   onClick={() => setSelectedTemplate("template9")}
                 >
                   <span className="text-xs">Innovación</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template13" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template13")}
+                >
+                  <span className="text-xs">Moderna</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template14" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template14")}
+                >
+                  <span className="text-xs">Profesional</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "template15" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("template15")}
+                >
+                  <span className="text-xs">Minimalista</span>
                 </Button>
               </div>
             </CardContent>
