@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,11 @@ import TemplateEight from "./email-templates/TemplateEight";
 import TemplateNine from "./email-templates/TemplateNine";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import TemplateThirteen from './email-templates/TemplateThirteen';
+import TemplateFourteen from './email-templates/TemplateFourteen';
+import TemplateFifteen from './email-templates/TemplateFifteen';
+import TemplateSixteen from './email-templates/TemplateSixteen';
+import TemplateSeventeen from './email-templates/TemplateSeventeen';
 
 const EmailTemplateEditor = () => {
   const { toast } = useToast();
@@ -201,6 +205,27 @@ const EmailTemplateEditor = () => {
       });
     } finally {
       setIsSending(false);
+    }
+  };
+
+  const renderTemplatePreview = (templateNumber: string) => {
+    const previewProps = {
+      subject: "Vista Previa",
+      heading: `Plantilla ${templateNumber}`,
+      subheading: "Previsualización de diseño",
+      content: "Esta es una vista previa de la plantilla de correo electrónico.",
+      buttonText: "Ver Más",
+      buttonUrl: "#",
+      imageUrl: "https://via.placeholder.com/600x300"
+    };
+
+    switch (templateNumber) {
+      case "template13": return <TemplateThirteen {...previewProps} />;
+      case "template14": return <TemplateFourteen {...previewProps} />;
+      case "template15": return <TemplateFifteen {...previewProps} />;
+      case "template16": return <TemplateSixteen {...previewProps} />;
+      case "template17": return <TemplateSeventeen {...previewProps} />;
+      default: return null;
     }
   };
 
@@ -470,6 +495,35 @@ const EmailTemplateEditor = () => {
           </Card>
         </div>
 
+        
+        <Card className="mt-6 lg:col-span-12">
+          <CardHeader>
+            <CardTitle>Catálogo de Plantillas</CardTitle>
+            <p className="text-muted-foreground">Haz clic en una plantilla para obtener una vista previa</p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {["template13", "template14", "template15", "template16", "template17"].map((templateNumber) => (
+                <div 
+                  key={templateNumber} 
+                  className={`border rounded-lg p-2 cursor-pointer hover:bg-accent transition-colors ${
+                    selectedTemplate === templateNumber ? 'bg-primary text-primary-foreground' : ''
+                  }`}
+                  onClick={() => setSelectedTemplate(templateNumber)}
+                >
+                  <div className="text-center text-sm font-medium mb-2">
+                    Plantilla {templateNumber.replace('template', '')}
+                  </div>
+                  <div className="h-32 overflow-hidden">
+                    {renderTemplatePreview(templateNumber)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Vista previa de plantilla seleccionada */}
         <div className="lg:col-span-7">
           <div className="bg-white rounded-lg shadow">
             <div className="p-4 border-b flex justify-between items-center">
