@@ -13,6 +13,11 @@ import TemplateNine from "@/components/email-templates/TemplateNine";
 import TemplateTen from "@/components/email-templates/TemplateTen";
 import TemplateEleven from "@/components/email-templates/TemplateEleven";
 import TemplateTwelve from "@/components/email-templates/TemplateTwelve";
+import TemplateThirteen from "@/components/email-templates/TemplateThirteen";
+import TemplateFourteen from "@/components/email-templates/TemplateFourteen";
+import TemplateFifteen from "@/components/email-templates/TemplateFifteen";
+import TemplateSixteen from "@/components/email-templates/TemplateSixteen";
+import TemplateSeventeen from "@/components/email-templates/TemplateSeventeen";
 
 interface EmailRecipient {
   email: string;
@@ -266,6 +271,11 @@ const getTemplateComponent = (templateId: string, props: any) => {
     case "template10": return React.createElement(TemplateTen, props);
     case "template11": return React.createElement(TemplateEleven, props);
     case "template12": return React.createElement(TemplateTwelve, props);
+    case "template13": return React.createElement(TemplateThirteen, props);
+    case "template14": return React.createElement(TemplateFourteen, props);
+    case "template15": return React.createElement(TemplateFifteen, props);
+    case "template16": return React.createElement(TemplateSixteen, props);
+    case "template17": return React.createElement(TemplateSeventeen, props);
     default: return React.createElement(TemplateOne, props);
   }
 };
