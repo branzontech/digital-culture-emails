@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -17,11 +18,6 @@ import TemplateEight from "./email-templates/TemplateEight";
 import TemplateNine from "./email-templates/TemplateNine";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import TemplateThirteen from './email-templates/TemplateThirteen';
-import TemplateFourteen from './email-templates/TemplateFourteen';
-import TemplateFifteen from './email-templates/TemplateFifteen';
-import TemplateSixteen from './email-templates/TemplateSixteen';
-import TemplateSeventeen from './email-templates/TemplateSeventeen';
 
 const EmailTemplateEditor = () => {
   const { toast } = useToast();
@@ -86,11 +82,6 @@ const EmailTemplateEditor = () => {
       case "template7": return <TemplateSeven {...templateProps} />;
       case "template8": return <TemplateEight {...templateProps} />;
       case "template9": return <TemplateNine {...templateProps} />;
-      case "template13": return <TemplateThirteen {...templateProps} />;
-      case "template14": return <TemplateFourteen {...templateProps} />;
-      case "template15": return <TemplateFifteen {...templateProps} />;
-      case "template16": return <TemplateSixteen {...templateProps} />;
-      case "template17": return <TemplateSeventeen {...templateProps} />;
       default: return <TemplateOne {...templateProps} />;
     }
   };
@@ -210,27 +201,6 @@ const EmailTemplateEditor = () => {
       });
     } finally {
       setIsSending(false);
-    }
-  };
-
-  const renderTemplatePreview = (templateNumber: string) => {
-    const previewProps = {
-      subject: "Vista Previa",
-      heading: `Plantilla ${templateNumber}`,
-      subheading: "Previsualización de diseño",
-      content: "Esta es una vista previa de la plantilla de correo electrónico.",
-      buttonText: "Ver Más",
-      buttonUrl: "#",
-      imageUrl: "https://via.placeholder.com/600x300"
-    };
-
-    switch (templateNumber) {
-      case "template13": return <TemplateThirteen {...previewProps} />;
-      case "template14": return <TemplateFourteen {...previewProps} />;
-      case "template15": return <TemplateFifteen {...previewProps} />;
-      case "template16": return <TemplateSixteen {...previewProps} />;
-      case "template17": return <TemplateSeventeen {...previewProps} />;
-      default: return null;
     }
   };
 
@@ -473,6 +443,7 @@ const EmailTemplateEditor = () => {
                 >
                   <span className="text-xs">Políticas</span>
                 </Button>
+                {/* New template buttons */}
                 <Button
                   variant={selectedTemplate === "template7" ? "default" : "outline"}
                   className="h-auto p-4 flex flex-col"
@@ -494,76 +465,11 @@ const EmailTemplateEditor = () => {
                 >
                   <span className="text-xs">Innovación</span>
                 </Button>
-                {/* New template buttons */}
-                <Button
-                  variant={selectedTemplate === "template13" ? "default" : "outline"}
-                  className="h-auto p-4 flex flex-col"
-                  onClick={() => setSelectedTemplate("template13")}
-                >
-                  <span className="text-xs">Moderna</span>
-                </Button>
-                <Button
-                  variant={selectedTemplate === "template14" ? "default" : "outline"}
-                  className="h-auto p-4 flex flex-col"
-                  onClick={() => setSelectedTemplate("template14")}
-                >
-                  <span className="text-xs">Elegante</span>
-                </Button>
-                <Button
-                  variant={selectedTemplate === "template15" ? "default" : "outline"}
-                  className="h-auto p-4 flex flex-col"
-                  onClick={() => setSelectedTemplate("template15")}
-                >
-                  <span className="text-xs">Dinámica</span>
-                </Button>
-                <Button
-                  variant={selectedTemplate === "template16" ? "default" : "outline"}
-                  className="h-auto p-4 flex flex-col"
-                  onClick={() => setSelectedTemplate("template16")}
-                >
-                  <span className="text-xs">Creativa</span>
-                </Button>
-                <Button
-                  variant={selectedTemplate === "template17" ? "default" : "outline"}
-                  className="h-auto p-4 flex flex-col"
-                  onClick={() => setSelectedTemplate("template17")}
-                >
-                  <span className="text-xs">Minimalista</span>
-                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        
-        <Card className="mt-6 lg:col-span-12">
-          <CardHeader>
-            <CardTitle>Catálogo de Plantillas</CardTitle>
-            <p className="text-muted-foreground">Haz clic en una plantilla para obtener una vista previa</p>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {["template13", "template14", "template15", "template16", "template17"].map((templateNumber) => (
-                <div 
-                  key={templateNumber} 
-                  className={`border rounded-lg p-2 cursor-pointer hover:bg-accent transition-colors ${
-                    selectedTemplate === templateNumber ? 'bg-primary text-primary-foreground' : ''
-                  }`}
-                  onClick={() => setSelectedTemplate(templateNumber)}
-                >
-                  <div className="text-center text-sm font-medium mb-2">
-                    Plantilla {templateNumber.replace('template', '')}
-                  </div>
-                  <div className="h-32 overflow-hidden">
-                    {renderTemplatePreview(templateNumber)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Vista previa de plantilla seleccionada */}
         <div className="lg:col-span-7">
           <div className="bg-white rounded-lg shadow">
             <div className="p-4 border-b flex justify-between items-center">
