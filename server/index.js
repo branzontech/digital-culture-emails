@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -64,6 +65,9 @@ app.get('/', (req, res) => {
 let transporter;
 let mailgunClient;
 let resendClient;
+
+// Array to store scheduled emails (in a real app this would be a database)
+const scheduledEmails = [];
 
 // Inicialización asíncrona del transportador
 const initializeTransporter = async () => {
@@ -155,7 +159,32 @@ const sendWithMailgun = async (data) => {
 // Función para enviar correo con Resend
 const sendWithResend = async (data) => {
   try {
-    const { to, subject, htmlContent, from } = data;
+    const { to, subject, htmlContent, from, scheduledFor } = data;
+    
+    // Check if email is scheduled for the future
+    if (scheduledFor) {
+      const scheduledTime = new Date(scheduledFor);
+      const now = new Date();
+      
+      if (scheduledTime > now) {
+        console.log(`Email scheduled for future delivery at: ${scheduledTime.toISOString()}`);
+        
+        // In a real implementation, we would store this in a database
+        // and use a cron job to check for and send scheduled emails
+        
+        // For this demo, we'll store it in memory and simulate scheduling
+        scheduledEmails.push({
+          ...data,
+          scheduledTime
+        });
+        
+        return {
+          success: true,
+          message: `Correo programado para envío el ${scheduledTime.toLocaleDateString()} a las ${scheduledTime.toLocaleTimeString()}`,
+          scheduled: true
+        };
+      }
+    }
     
     // Formatear el destinatario para Resend
     let toAddresses;
@@ -192,7 +221,7 @@ const sendWithResend = async (data) => {
 // Ruta para enviar correos
 app.post('/api/send-email', async (req, res) => {
   try {
-    const { to, subject, htmlContent, from } = req.body;
+    const { to, subject, htmlContent, from, scheduledFor } = req.body;
     
     if (!to || !subject || !htmlContent) {
       return res.status(400).json({ 
@@ -209,6 +238,33 @@ app.post('/api/send-email', async (req, res) => {
       ? `${from.name} <${from.email || defaultFromEmail}>` 
       : defaultFromEmail;
     
+    // Check if scheduled for future
+    if (scheduledFor) {
+      const scheduledTime = new Date(scheduledFor);
+      const now = new Date();
+      
+      if (scheduledTime > now) {
+        console.log(`Email scheduled for future delivery at: ${scheduledTime.toISOString()}`);
+        
+        // Store the scheduled email
+        scheduledEmails.push({
+          to,
+          subject,
+          htmlContent,
+          from: formattedFrom,
+          scheduledTime
+        });
+        
+        // Return success response
+        res.header('Access-Control-Allow-Origin', '*');
+        return res.status(200).json({
+          success: true,
+          message: `Correo programado para envío el ${scheduledTime.toLocaleDateString()} a las ${scheduledTime.toLocaleTimeString()}`,
+          scheduled: true
+        });
+      }
+    }
+    
     // Intentar enviar el correo con el método disponible
     let result;
     
@@ -218,7 +274,8 @@ app.post('/api/send-email', async (req, res) => {
         to, 
         subject, 
         htmlContent, 
-        from: formattedFrom
+        from: formattedFrom,
+        scheduledFor
       });
     } else if (transporter) {
       // Enviar con Nodemailer
@@ -274,6 +331,45 @@ app.post('/api/send-email', async (req, res) => {
     });
   }
 });
+
+// In a real application, we would implement a cron job or scheduler to check for scheduled emails
+// For this demo, we'll simulate checking every minute (not suitable for production)
+if (process.env.NODE_ENV !== 'production') {
+  setInterval(() => {
+    const now = new Date();
+    const emailsToSend = scheduledEmails.filter(email => 
+      email.scheduledTime && email.scheduledTime <= now
+    );
+    
+    if (emailsToSend.length > 0) {
+      console.log(`Found ${emailsToSend.length} scheduled emails to send`);
+      
+      emailsToSend.forEach(async (email) => {
+        try {
+          console.log(`Sending scheduled email: ${email.subject}`);
+          
+          // Remove from the schedule
+          const index = scheduledEmails.indexOf(email);
+          if (index > -1) {
+            scheduledEmails.splice(index, 1);
+          }
+          
+          // Send the email (simplified - would use the sendWith* functions in production)
+          if (resendClient) {
+            await sendWithResend({
+              to: email.to,
+              subject: email.subject,
+              htmlContent: email.htmlContent,
+              from: email.from
+            });
+          }
+        } catch (error) {
+          console.error(`Failed to send scheduled email: ${error.message}`);
+        }
+      });
+    }
+  }, 60000); // Check every minute
+}
 
 // Iniciar el servidor
 app.listen(PORT, () => {

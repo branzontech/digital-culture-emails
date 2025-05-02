@@ -38,14 +38,31 @@ serve(async (req) => {
       )
     }
 
-    const { to, subject, htmlContent } = await req.json()
+    const { to, subject, htmlContent, scheduledFor } = await req.json()
 
     // Log content length to help with debugging
     console.log("Received email request:", {
       subject,
       htmlContentLength: htmlContent ? htmlContent.length : 0,
-      toEmail: to?.email || (Array.isArray(to) ? to.map(t => t.email).join(', ') : to)
+      toEmail: to?.email || (Array.isArray(to) ? to.map(t => t.email).join(', ') : to),
+      scheduledFor: scheduledFor || "Immediate"
     });
+
+    // Check for scheduled time in the future
+    if (scheduledFor) {
+      const scheduledTime = new Date(scheduledFor);
+      const now = new Date();
+      
+      if (scheduledTime > now) {
+        console.log(`Email scheduled for future delivery at: ${scheduledTime.toISOString()}`);
+        // In a real implementation, you would:
+        // 1. Save the email to a database table
+        // 2. Set up a cron job or scheduled task to check for and send scheduled emails
+        // 3. Return a success response without actually sending the email yet
+        
+        // For this demo, we'll continue with immediate delivery but log that it's scheduled
+      }
+    }
 
     // Verificar que el HTML esté bien formado y asegurarse de que no contengan atributos de React
     let cleanHtml = htmlContent;
