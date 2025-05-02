@@ -3,9 +3,29 @@ import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Plus, Check, X } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Plus, Check, X, Upload, Search, Filter, UserPlus } from 'lucide-react';
 import Navbar from "@/components/Navbar";
-import { Toaster } from "@/components/ui/toaster";
+import { toast } from "@/hooks/use-toast";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 // Datos de ejemplo para contactos
 const mockContacts = [
@@ -34,10 +54,40 @@ const Contacts = () => {
   const [newContactName, setNewContactName] = useState('');
   const [newContactEmail, setNewContactEmail] = useState('');
   const [newListName, setNewListName] = useState('');
+  
+  // Estados para búsqueda y filtrado
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredContacts, setFilteredContacts] = useState(mockContacts);
+  
+  // Estados para diálogos
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [showAddToListDialog, setShowAddToListDialog] = useState(false);
+  const [selectedContacts, setSelectedContacts] = useState<number[]>([]);
+  const [selectedList, setSelectedList] = useState<number | null>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  
+  // Función para buscar contactos
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    if (!term.trim()) {
+      setFilteredContacts(mockContacts);
+      return;
+    }
+    
+    const filtered = mockContacts.filter(
+      contact => contact.name.toLowerCase().includes(term.toLowerCase()) || 
+                 contact.email.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredContacts(filtered);
+  };
 
   const handleCreateContact = () => {
     // Aquí iría la lógica para crear el contacto
     console.log('Crear contacto:', { name: newContactName, email: newContactEmail });
+    toast({
+      title: "Contacto creado",
+      description: `${newContactName} ha sido añadido a tus contactos.`,
+    });
     setNewContactName('');
     setNewContactEmail('');
     setShowNewContactForm(false);
@@ -46,13 +96,69 @@ const Contacts = () => {
   const handleCreateList = () => {
     // Aquí iría la lógica para crear la lista
     console.log('Crear lista:', { name: newListName });
+    toast({
+      title: "Lista creada",
+      description: `La lista ${newListName} ha sido creada.`,
+    });
     setNewListName('');
     setShowNewListForm(false);
   };
 
   const toggleContactStatus = (contactId: number) => {
-    // Aquí iría la lógica para activar/desactivar el contacto
+    // En un entorno real, aquí actualizaríamos el estado en la base de datos
     console.log('Toggle estado del contacto:', contactId);
+    toast({
+      title: "Estado actualizado",
+      description: "El estado del contacto ha sido actualizado.",
+    });
+  };
+  
+  const handleContactSelection = (contactId: number) => {
+    if (selectedContacts.includes(contactId)) {
+      setSelectedContacts(selectedContacts.filter(id => id !== contactId));
+    } else {
+      setSelectedContacts([...selectedContacts, contactId]);
+    }
+  };
+  
+  const handleAddToList = () => {
+    if (selectedList && selectedContacts.length > 0) {
+      console.log('Agregar contactos a lista:', { listId: selectedList, contactIds: selectedContacts });
+      toast({
+        title: "Contactos agregados",
+        description: `${selectedContacts.length} contacto(s) agregado(s) a la lista.`,
+      });
+      setSelectedContacts([]);
+      setSelectedList(null);
+      setShowAddToListDialog(false);
+    }
+  };
+  
+  const handleImportContacts = () => {
+    if (!importFile) {
+      toast({
+        title: "Error",
+        description: "Por favor selecciona un archivo para importar",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    console.log('Importar contactos desde archivo:', importFile.name);
+    toast({
+      title: "Importación iniciada",
+      description: "Los contactos están siendo importados. Esto puede tomar unos momentos.",
+    });
+    
+    // Simular importación exitosa después de un tiempo
+    setTimeout(() => {
+      toast({
+        title: "Importación completada",
+        description: "Los contactos han sido importados exitosamente.",
+      });
+      setImportFile(null);
+      setShowImportDialog(false);
+    }, 2000);
   };
 
   return (
@@ -75,30 +181,117 @@ const Contacts = () => {
             </div>
             
             <TabsContent value="contacts" className="p-4">
-              {!showNewContactForm ? (
-                <Button 
-                  className="w-full mb-4 flex justify-center items-center"
-                  onClick={() => setShowNewContactForm(true)}
-                >
-                  <Plus className="h-4 w-4 mr-2" /> Agregar contacto
-                </Button>
-              ) : (
+              {/* Barra de búsqueda y acciones */}
+              <div className="flex flex-col md:flex-row gap-2 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input 
+                    placeholder="Buscar contacto..." 
+                    className="pl-9"
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Importar
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Importar contactos</DialogTitle>
+                        <DialogDescription>
+                          Sube un archivo CSV o Excel con tus contactos.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+                          <Input 
+                            type="file" 
+                            accept=".csv,.xlsx,.xls" 
+                            className="mx-auto"
+                            onChange={(e) => setImportFile(e.target.files ? e.target.files[0] : null)}
+                          />
+                          <p className="text-sm text-gray-500 mt-2">
+                            Formatos soportados: CSV, Excel
+                          </p>
+                        </div>
+                        <Button className="w-full" onClick={handleImportContacts}>
+                          <Upload className="h-4 w-4 mr-2" />
+                          Importar contactos
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Dialog open={showAddToListDialog} onOpenChange={setShowAddToListDialog}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        disabled={selectedContacts.length === 0}
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Agregar a lista
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Agregar a lista</DialogTitle>
+                        <DialogDescription>
+                          Selecciona la lista a la que quieres agregar {selectedContacts.length} contacto(s).
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        {mockLists.map(list => (
+                          <div 
+                            key={list.id} 
+                            className={`p-3 border rounded-md cursor-pointer ${selectedList === list.id ? 'bg-blue-50 border-blue-500' : ''}`}
+                            onClick={() => setSelectedList(list.id)}
+                          >
+                            <div className="font-medium">{list.name}</div>
+                            <div className="text-sm text-gray-500">{list.contacts.length} contactos</div>
+                          </div>
+                        ))}
+                        <Button 
+                          className="w-full" 
+                          onClick={handleAddToList}
+                          disabled={!selectedList}
+                        >
+                          Agregar a lista seleccionada
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Button 
+                    className="flex justify-center items-center"
+                    onClick={() => setShowNewContactForm(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" /> Agregar
+                  </Button>
+                </div>
+              </div>
+              
+              {showNewContactForm && (
                 <div className="border border-gray-200 rounded-md p-4 mb-4 bg-gray-50">
                   <h4 className="font-medium mb-3">Nuevo contacto</h4>
                   <div className="space-y-3">
-                    <input
+                    <Input
                       type="text"
                       placeholder="Nombre"
                       value={newContactName}
                       onChange={(e) => setNewContactName(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full"
                     />
-                    <input
+                    <Input
                       type="email"
                       placeholder="Correo electrónico"
                       value={newContactEmail}
                       onChange={(e) => setNewContactEmail(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full"
                     />
                     <div className="flex justify-end space-x-2">
                       <Button 
@@ -118,31 +311,67 @@ const Contacts = () => {
                 </div>
               )}
               
-              <ScrollArea className="h-[500px]">
-                <div className="grid gap-3">
-                  {mockContacts.map((contact) => (
-                    <div 
-                      key={contact.id} 
-                      className="p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50 flex justify-between items-center"
-                    >
-                      <div>
-                        <div className="font-medium">{contact.name}</div>
-                        <div className="text-gray-500 text-sm">{contact.email}</div>
-                      </div>
-                      <button
-                        onClick={() => toggleContactStatus(contact.id)}
-                        className={`p-2 rounded-full ${
-                          contact.status === 'active' 
-                            ? 'bg-green-100 text-green-600' 
-                            : 'bg-gray-100 text-gray-400'
-                        }`}
-                        title={contact.status === 'active' ? 'Desactivar' : 'Activar'}
-                      >
-                        {contact.status === 'active' ? <Check size={18} /> : <X size={18} />}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+              <ScrollArea className="h-[500px] rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[30px]">
+                        <Input type="checkbox" className="w-4 h-4" onChange={() => {
+                          if (selectedContacts.length === filteredContacts.length) {
+                            setSelectedContacts([]);
+                          } else {
+                            setSelectedContacts(filteredContacts.map(c => c.id));
+                          }
+                        }} />
+                      </TableHead>
+                      <TableHead className="w-[250px]">Nombre</TableHead>
+                      <TableHead>Correo electrónico</TableHead>
+                      <TableHead className="text-right">Estado</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredContacts.map((contact) => (
+                      <TableRow key={contact.id}>
+                        <TableCell>
+                          <Input 
+                            type="checkbox" 
+                            className="w-4 h-4" 
+                            checked={selectedContacts.includes(contact.id)}
+                            onChange={() => handleContactSelection(contact.id)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <Avatar>
+                              <AvatarFallback>{contact.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div>{contact.name}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{contact.email}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Label htmlFor={`contact-status-${contact.id}`} className={`text-sm ${contact.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}>
+                              {contact.status === 'active' ? 'Activo' : 'Inactivo'}
+                            </Label>
+                            <Switch 
+                              id={`contact-status-${contact.id}`}
+                              checked={contact.status === 'active'} 
+                              onCheckedChange={() => toggleContactStatus(contact.id)}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredContacts.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                          No se encontraron contactos que coincidan con tu búsqueda
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </ScrollArea>
             </TabsContent>
             
@@ -158,12 +387,12 @@ const Contacts = () => {
                 <div className="border border-gray-200 rounded-md p-4 mb-4 bg-gray-50">
                   <h4 className="font-medium mb-3">Nueva lista</h4>
                   <div className="space-y-3">
-                    <input
+                    <Input
                       type="text"
                       placeholder="Nombre de la lista"
                       value={newListName}
                       onChange={(e) => setNewListName(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full"
                     />
                     <div className="flex justify-end space-x-2">
                       <Button 
@@ -196,6 +425,7 @@ const Contacts = () => {
                           {list.contacts.length} contactos
                         </div>
                         <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">Ver</Button>
                           <Button variant="outline" size="sm">Editar</Button>
                           <Button variant="destructive" size="sm">Eliminar</Button>
                         </div>
@@ -214,8 +444,6 @@ const Contacts = () => {
           <p>© 2025 Programa de Cultura Digital - Todos los derechos reservados</p>
         </div>
       </footer>
-      
-      <Toaster />
     </div>
   );
 };
