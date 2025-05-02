@@ -163,6 +163,24 @@ Les invitamos a participar en las sesiones de inducción que se realizarán dura
         padding: "25px 20px",
         borderTop: "5px solid #FFD800"
       }}>
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          alignItems: "center", 
+          marginBottom: "15px", 
+          gap: "10px" 
+        }}>
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_3-removebg-preview.png" 
+            alt="Avatar" 
+            style={{ height: "55px" }} 
+          />
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_4-removebg-preview.png" 
+            alt="Avatar" 
+            style={{ height: "55px" }} 
+          />
+        </div>
         <p style={{ margin: "0 0 15px 0", fontSize: "16px", fontWeight: "bold" }}>
           Departamento de Tecnología de la Información
         </p>

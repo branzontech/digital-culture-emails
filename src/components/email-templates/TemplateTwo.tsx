@@ -117,6 +117,18 @@ Recuerde que su vigilancia es nuestra primera línea de defensa contra los ciber
       
       {/* Footer */}
       <div style={{ padding: "20px", backgroundColor: "#0052A5", color: "white", textAlign: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "15px", gap: "15px" }}>
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_2-removebg-preview.png" 
+            alt="Avatar" 
+            style={{ height: "60px" }} 
+          />
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_3-removebg-preview.png" 
+            alt="Avatar" 
+            style={{ height: "60px" }} 
+          />
+        </div>
         <div style={{ borderBottom: "1px solid rgba(255,255,255,0.3)", paddingBottom: "15px", marginBottom: "15px" }}>
           <p style={{ margin: "0", fontSize: "14px" }}>
             <strong>Departamento de Seguridad Informática</strong>

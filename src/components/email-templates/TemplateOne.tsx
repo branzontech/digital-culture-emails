@@ -94,6 +94,18 @@ Compartimos con ustedes los tips tecnológicos de esta semana que ayudarán a me
       
       <tr>
         <td style={{ backgroundColor: "#0052A5", padding: "20px", color: "white", textAlign: "center" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "15px" }}>
+            <img 
+              src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_1-removebg-preview.png" 
+              alt="Avatar" 
+              style={{ height: "60px", marginRight: "10px" }} 
+            />
+            <img 
+              src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_2-removebg-preview.png" 
+              alt="Avatar" 
+              style={{ height: "60px", marginRight: "10px" }} 
+            />
+          </div>
           <p style={{ margin: "0 0 10px 0", fontSize: "14px" }}>
             © 2025 Cultura Digital - Todos los derechos reservados
           </p>
