@@ -1,6 +1,8 @@
 
 import EmailTemplateEditor from "@/components/EmailTemplateEditor";
 import { Toaster } from "@/components/ui/toaster";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   return (
@@ -19,6 +21,11 @@ const Index = () => {
                 <p className="text-sm opacity-80">Programa de Cultura Digital</p>
               </div>
             </div>
+            <Link to="/login">
+              <Button variant="outline" className="bg-white/20 hover:bg-white/30 text-white border-white/40">
+                Iniciar Sesión
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
