@@ -273,6 +273,24 @@ Estas medidas son esenciales para mantener la seguridad de nuestra información 
           </span>
         </div>
         
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "center", 
+          gap: "20px", 
+          marginBottom: "20px" 
+        }}>
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_32_43-removebg-preview.png" 
+            alt="Imagen Footer 1" 
+            style={{ height: "40px" }}
+          />
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_50_45-removebg-preview.png" 
+            alt="Imagen Footer 2" 
+            style={{ height: "40px" }}
+          />
+        </div>
+        
         <p style={{ 
           margin: "0", 
           fontSize: "12px", 
