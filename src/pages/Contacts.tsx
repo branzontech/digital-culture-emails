@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Check, X, Upload, Search, Filter, UserPlus } from 'lucide-react';
+import { Plus, Check, X, Upload, Search, Filter, UserPlus, PenLine } from 'lucide-react';
 import Navbar from "@/components/Navbar";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -65,6 +65,10 @@ const Contacts = () => {
   const [selectedContacts, setSelectedContacts] = useState<number[]>([]);
   const [selectedList, setSelectedList] = useState<number | null>(null);
   const [importFile, setImportFile] = useState<File | null>(null);
+  
+  // Estados para edición de listas
+  const [editingListId, setEditingListId] = useState<number | null>(null);
+  const [editedListName, setEditedListName] = useState('');
   
   // Función para buscar contactos
   const handleSearch = (term: string) => {
@@ -159,6 +163,31 @@ const Contacts = () => {
       setImportFile(null);
       setShowImportDialog(false);
     }, 2000);
+  };
+  
+  // Nueva función para comenzar la edición de una lista
+  const startEditingList = (list: { id: number; name: string }) => {
+    setEditingListId(list.id);
+    setEditedListName(list.name);
+  };
+  
+  // Nueva función para guardar los cambios de una lista editada
+  const saveEditedList = () => {
+    if (editingListId && editedListName.trim()) {
+      console.log('Guardar lista editada:', { id: editingListId, name: editedListName });
+      toast({
+        title: "Lista actualizada",
+        description: `La lista ha sido renombrada a "${editedListName}".`,
+      });
+      setEditingListId(null);
+      setEditedListName('');
+    }
+  };
+  
+  // Nueva función para cancelar la edición de una lista
+  const cancelEditList = () => {
+    setEditingListId(null);
+    setEditedListName('');
   };
 
   return (
@@ -419,17 +448,53 @@ const Contacts = () => {
                       key={list.id} 
                       className="p-4 bg-white border border-gray-200 rounded-md hover:bg-gray-50"
                     >
-                      <div className="font-medium">{list.name}</div>
-                      <div className="flex justify-between items-center mt-2">
-                        <div className="text-gray-500 text-sm">
-                          {list.contacts.length} contactos
+                      {editingListId === list.id ? (
+                        <div className="space-y-3">
+                          <Input
+                            type="text"
+                            value={editedListName}
+                            onChange={(e) => setEditedListName(e.target.value)}
+                            autoFocus
+                            className="w-full"
+                          />
+                          <div className="flex justify-end space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={cancelEditList}
+                            >
+                              <X className="h-4 w-4 mr-1" /> Cancelar
+                            </Button>
+                            <Button 
+                              size="sm"
+                              onClick={saveEditedList}
+                              disabled={!editedListName.trim()}
+                            >
+                              <Check className="h-4 w-4 mr-1" /> Guardar
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">Ver</Button>
-                          <Button variant="outline" size="sm">Editar</Button>
-                          <Button variant="destructive" size="sm">Eliminar</Button>
-                        </div>
-                      </div>
+                      ) : (
+                        <>
+                          <div className="font-medium">{list.name}</div>
+                          <div className="flex justify-between items-center mt-2">
+                            <div className="text-gray-500 text-sm">
+                              {list.contacts.length} contactos
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button variant="outline" size="sm">Ver</Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => startEditingList(list)}
+                              >
+                                <PenLine className="h-4 w-4 mr-1" /> Editar
+                              </Button>
+                              <Button variant="destructive" size="sm">Eliminar</Button>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
