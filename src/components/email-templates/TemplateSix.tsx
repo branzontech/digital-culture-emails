@@ -246,59 +246,64 @@ Estas medidas son esenciales para mantener la seguridad de nuestra información 
         </p>
       </div>
       
-      {/* Footer */}
+      {/* Footer with 3D Image */}
       <div style={{ 
         padding: "30px 20px 20px", 
         backgroundColor: "#f1f5fb",
-        borderTop: "1px solid #e0e0e0"
+        borderTop: "1px solid #e0e0e0",
+        position: "relative",
+        overflow: "visible"
       }}>
         <div style={{ 
-          display: "flex", 
-          alignItems: "center", 
-          justifyContent: "center", 
-          marginBottom: "20px" 
+          position: "absolute", 
+          top: "-55px", 
+          left: "50%", 
+          transform: "translateX(-50%)",
+          filter: "drop-shadow(0px 8px 16px rgba(0,0,0,0.3))"
         }}>
-          <img 
-            src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
-            alt="Cultura Digital" 
-            style={{ height: "30px" }}
-          />
-          <span style={{ 
-            marginLeft: "10px", 
-            fontSize: "14px", 
-            color: "#0052A5", 
-            fontWeight: "bold" 
-          }}>
-            Programa de Cultura Digital
-          </span>
-        </div>
-        
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "center", 
-          gap: "20px", 
-          marginBottom: "20px" 
-        }}>
-          <img 
-            src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_32_43-removebg-preview.png" 
-            alt="Imagen Footer 1" 
-            style={{ height: "40px" }}
-          />
           <img 
             src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_50_45-removebg-preview.png" 
-            alt="Imagen Footer 2" 
-            style={{ height: "40px" }}
+            alt="Imagen Footer 3D" 
+            style={{ 
+              height: "100px",
+              transform: "perspective(1000px) rotateX(15deg)",
+              transition: "transform 0.3s ease"
+            }}
           />
         </div>
         
-        <p style={{ 
-          margin: "0", 
-          fontSize: "12px", 
-          textAlign: "center", 
-          color: "#777" 
-        }}>
-          © 2025 Todos los derechos reservados
-        </p>
+        {/* Add padding top to ensure content is below the protruding image */}
+        <div style={{ paddingTop: "55px" }}>
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "center", 
+            marginBottom: "20px" 
+          }}>
+            <img 
+              src="https://cuidadoseguro.com.co/csc3/wp-content/uploads/2025/04/CULTURA-DIGITAL-CURVAS1.svg" 
+              alt="Cultura Digital" 
+              style={{ height: "30px" }}
+            />
+            <span style={{ 
+              marginLeft: "10px", 
+              fontSize: "14px", 
+              color: "#0052A5", 
+              fontWeight: "bold" 
+            }}>
+              Programa de Cultura Digital
+            </span>
+          </div>
+          
+          <p style={{ 
+            margin: "0", 
+            fontSize: "12px", 
+            textAlign: "center", 
+            color: "#777" 
+          }}>
+            © 2025 Todos los derechos reservados
+          </p>
+        </div>
       </div>
     </div>
   );

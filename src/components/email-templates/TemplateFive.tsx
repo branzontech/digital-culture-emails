@@ -167,32 +167,44 @@ Le invitamos a explorar estas tendencias y considerar cómo podrían beneficiar 
         </div>
       </div>
       
-      {/* Footer */}
+      {/* Footer with 3D Image */}
       <div style={{ 
         backgroundColor: "#0052A5", 
         padding: "25px", 
         color: "white", 
         textAlign: "center",
-        fontSize: "13px"
+        fontSize: "13px",
+        position: "relative",
+        overflow: "visible"
       }}>
-        <div style={{ marginBottom: "15px", display: "flex", justifyContent: "center", gap: "20px" }}>
+        {/* 3D Image that stands out from the footer */}
+        <div style={{ 
+          position: "absolute", 
+          top: "-45px", 
+          left: "50%", 
+          transform: "translateX(-50%)",
+          filter: "drop-shadow(0px 6px 12px rgba(0,0,0,0.25))"
+        }}>
           <img 
             src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_32_43-removebg-preview.png" 
-            alt="Imagen Footer 1"
-            style={{ height: "40px" }}
-          />
-          <img 
-            src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_50_45-removebg-preview.png" 
-            alt="Imagen Footer 2" 
-            style={{ height: "40px" }}
+            alt="Imagen Footer 3D" 
+            style={{ 
+              height: "85px",
+              transform: "perspective(800px) rotateX(10deg)",
+              transition: "transform 0.3s ease"
+            }}
           />
         </div>
-        <p style={{ margin: "0 0 10px 0", opacity: "0.9" }}>
-          Programa de Cultura Digital | cultura.digital@ejemplo.com
-        </p>
-        <p style={{ margin: "0", opacity: "0.7" }}>
-          © 2025 Todos los derechos reservados
-        </p>
+        
+        {/* Add padding top to ensure text is below the protruding image */}
+        <div style={{ paddingTop: "50px" }}>
+          <p style={{ margin: "0 0 10px 0", opacity: "0.9" }}>
+            Programa de Cultura Digital | cultura.digital@ejemplo.com
+          </p>
+          <p style={{ margin: "0", opacity: "0.7" }}>
+            © 2025 Todos los derechos reservados
+          </p>
+        </div>
       </div>
     </div>
   );
