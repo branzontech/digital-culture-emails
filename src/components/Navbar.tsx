@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Home, Bell, Users } from 'lucide-react';
 import {
   NavigationMenu,
@@ -10,15 +10,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import NotificationsPopover from './NotificationsPopover';
-import ContactsPopover from './ContactsPopover';
 
 interface NavbarProps {
   className?: string;
 }
 
 const Navbar = ({ className }: NavbarProps) => {
-  const [activeItem, setActiveItem] = useState<string>('/');
+  const location = useLocation();
   
   return (
     <div className={cn("w-full bg-gradient-to-r from-[#0052A5] to-[#0066CC] text-white shadow-md px-4 py-2", className)}>
@@ -35,11 +33,11 @@ const Navbar = ({ className }: NavbarProps) => {
         <NavigationMenu className="mx-auto">
           <NavigationMenuList className="flex gap-4">
             <NavigationMenuItem>
-              <Link to="/" onClick={() => setActiveItem('/')}>
+              <Link to="/">
                 <NavigationMenuLink className={cn(
                   navigationMenuTriggerStyle(),
                   "bg-transparent hover:bg-white/20 text-white",
-                  activeItem === '/' && "bg-white/20"
+                  location.pathname === '/' && "bg-white/20"
                 )}>
                   <Home className="mr-2 h-4 w-4" />
                   <span>Inicio</span>
@@ -48,17 +46,29 @@ const Navbar = ({ className }: NavbarProps) => {
             </NavigationMenuItem>
             
             <NavigationMenuItem>
-              <NotificationsPopover
-                onOpenChange={() => setActiveItem('notifications')}
-                isActive={activeItem === 'notifications'}
-              />
+              <Link to="/notifications">
+                <NavigationMenuLink className={cn(
+                  navigationMenuTriggerStyle(),
+                  "bg-transparent hover:bg-white/20 text-white",
+                  location.pathname === '/notifications' && "bg-white/20"
+                )}>
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notificaciones</span>
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
             
             <NavigationMenuItem>
-              <ContactsPopover 
-                onOpenChange={() => setActiveItem('contacts')}
-                isActive={activeItem === 'contacts'}
-              />
+              <Link to="/contacts">
+                <NavigationMenuLink className={cn(
+                  navigationMenuTriggerStyle(),
+                  "bg-transparent hover:bg-white/20 text-white",
+                  location.pathname === '/contacts' && "bg-white/20"
+                )}>
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>Contactos</span>
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
