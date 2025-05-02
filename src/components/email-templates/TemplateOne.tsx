@@ -93,17 +93,24 @@ Compartimos con ustedes los tips tecnológicos de esta semana que ayudarán a me
       </tr>
       
       <tr>
-        <td style={{ backgroundColor: "#0052A5", padding: "20px", color: "white", textAlign: "center" }}>
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "15px" }}>
+        <td style={{ backgroundColor: "#0052A5", padding: "20px", color: "white", textAlign: "center", position: "relative" }}>
+          <div style={{ 
+            position: "relative", 
+            marginBottom: "20px", 
+            height: "80px" 
+          }}>
             <img 
               src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_1-removebg-preview.png" 
               alt="Avatar" 
-              style={{ height: "60px", marginRight: "10px" }} 
-            />
-            <img 
-              src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_2-removebg-preview.png" 
-              alt="Avatar" 
-              style={{ height: "60px", marginRight: "10px" }} 
+              style={{ 
+                height: "100px", 
+                position: "absolute", 
+                top: "-40px", 
+                left: "50%", 
+                transform: "translateX(-50%)",
+                filter: "drop-shadow(0px 10px 8px rgba(0,0,0,0.5))",
+                transition: "transform 0.3s ease"
+              }} 
             />
           </div>
           <p style={{ margin: "0 0 10px 0", fontSize: "14px" }}>

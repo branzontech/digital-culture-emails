@@ -116,17 +116,24 @@ Recuerde que su vigilancia es nuestra primera línea de defensa contra los ciber
       </div>
       
       {/* Footer */}
-      <div style={{ padding: "20px", backgroundColor: "#0052A5", color: "white", textAlign: "center" }}>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "15px", gap: "15px" }}>
+      <div style={{ padding: "20px", backgroundColor: "#0052A5", color: "white", textAlign: "center", position: "relative" }}>
+        <div style={{ 
+          position: "relative",
+          height: "90px",
+          marginBottom: "15px"
+        }}>
           <img 
             src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_2-removebg-preview.png" 
             alt="Avatar" 
-            style={{ height: "60px" }} 
-          />
-          <img 
-            src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_3-removebg-preview.png" 
-            alt="Avatar" 
-            style={{ height: "60px" }} 
+            style={{ 
+              height: "120px",
+              position: "absolute",
+              top: "-50px",
+              left: "50%",
+              transform: "translateX(-50%) perspective(400px) rotateX(10deg)",
+              filter: "drop-shadow(0 15px 15px rgba(0,0,0,0.4))",
+              transformOrigin: "bottom center"
+            }} 
           />
         </div>
         <div style={{ borderBottom: "1px solid rgba(255,255,255,0.3)", paddingBottom: "15px", marginBottom: "15px" }}>

@@ -161,24 +161,28 @@ Les invitamos a participar en las sesiones de inducción que se realizarán dura
         color: "white", 
         textAlign: "center",
         padding: "25px 20px",
-        borderTop: "5px solid #FFD800"
+        borderTop: "5px solid #FFD800",
+        position: "relative",
+        overflow: "hidden"
       }}>
         <div style={{ 
-          display: "flex", 
-          justifyContent: "center", 
-          alignItems: "center", 
-          marginBottom: "15px", 
-          gap: "10px" 
+          position: "relative",
+          height: "100px",
+          marginBottom: "20px"
         }}>
-          <img 
-            src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_3-removebg-preview.png" 
-            alt="Avatar" 
-            style={{ height: "55px" }} 
-          />
           <img 
             src="https://branzontech.com/wp-content/uploads/2025/05/avatar_pose_4-removebg-preview.png" 
             alt="Avatar" 
-            style={{ height: "55px" }} 
+            style={{ 
+              height: "140px",
+              position: "absolute",
+              top: "-60px",
+              left: "50%",
+              transform: "translateX(-50%) perspective(800px) rotateY(-5deg)",
+              filter: "drop-shadow(5px 15px 10px rgba(0,0,0,0.6))",
+              transformStyle: "preserve-3d",
+              animation: "float 3s ease-in-out infinite"
+            }} 
           />
         </div>
         <p style={{ margin: "0 0 15px 0", fontSize: "16px", fontWeight: "bold" }}>
@@ -190,6 +194,16 @@ Les invitamos a participar en las sesiones de inducción que se realizarán dura
         <p style={{ margin: "0", fontSize: "12px", opacity: "0.7" }}>
           © 2025 Cultura Digital - Todos los derechos reservados
         </p>
+        
+        <style>
+          {`
+            @keyframes float {
+              0% { transform: translateX(-50%) perspective(800px) rotateY(-5deg) translateY(0px); }
+              50% { transform: translateX(-50%) perspective(800px) rotateY(-5deg) translateY(-10px); }
+              100% { transform: translateX(-50%) perspective(800px) rotateY(-5deg) translateY(0px); }
+            }
+          `}
+        </style>
       </div>
     </div>
   );
