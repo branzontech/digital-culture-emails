@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Users, Send, Loader2, ExternalLink, Calendar } from "lucide-react";
+import { Mail, Users, Send, Loader2, ExternalLink, Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TemplateOne from "./email-templates/TemplateOne";
 import TemplateTwo from "./email-templates/TemplateTwo";
@@ -20,12 +21,15 @@ import FourteenTemplate from "./email-templates/FourteenTemplate";
 import FifteenTemplate from "./email-templates/FifteenTemplate";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useMediaQuery } from "@/hooks/use-mobile";
 
 const EmailTemplateEditor = () => {
   const { toast } = useToast();
@@ -45,13 +49,17 @@ const EmailTemplateEditor = () => {
   const [sendMode, setSendMode] = useState<"individual" | "bulk">("individual");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
-  // New scheduling state
+  // Scheduling state
   const [isScheduling, setIsScheduling] = useState<boolean>(false);
   const [scheduleType, setScheduleType] = useState<"now" | "hours" | "days">("now");
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(new Date());
   const [scheduledTime, setScheduledTime] = useState<string>("12:00");
   const [scheduledHours, setScheduledHours] = useState<number>(1);
   const [scheduledDays, setScheduledDays] = useState<number>(1);
+  
+  // Dialog/drawer state
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState<boolean>(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const handleInputChange = (field: string, value: string) => {
     setTemplateContent({
@@ -243,6 +251,9 @@ const EmailTemplateEditor = () => {
         if (result.previewUrl) {
           setPreviewUrl(result.previewUrl);
         }
+        
+        // Close the scheduling dialog if open
+        setIsScheduleDialogOpen(false);
       } else {
         toast({
           title: "Error",
@@ -260,6 +271,168 @@ const EmailTemplateEditor = () => {
     } finally {
       setIsSending(false);
     }
+  };
+
+  // Scheduling popup component based on device
+  const SchedulingPopup = () => {
+    const content = (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Tipo de programación</label>
+          <Select
+            value={scheduleType}
+            onValueChange={(value: "now" | "hours" | "days") => setScheduleType(value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Seleccione cuándo enviar" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="now">Enviar ahora</SelectItem>
+              <SelectItem value="hours">En X horas</SelectItem>
+              <SelectItem value="days">En fecha específica</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {scheduleType === "hours" && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Horas desde ahora</label>
+            <div className="flex items-center gap-2">
+              <Input 
+                type="number" 
+                min="1" 
+                max="72"
+                value={scheduledHours}
+                onChange={(e) => setScheduledHours(parseInt(e.target.value) || 1)}
+              />
+              <span>hora(s)</span>
+            </div>
+            <p className="text-xs text-gray-500">
+              Se enviará aproximadamente a las {format(
+                new Date(Date.now() + scheduledHours * 60 * 60 * 1000),
+                "HH:mm, dd 'de' MMMM", 
+                { locale: es }
+              )}
+            </p>
+          </div>
+        )}
+        
+        {scheduleType === "days" && (
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Seleccione fecha</label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="justify-start text-left font-normal w-full"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {scheduledDate ? (
+                      format(scheduledDate, "PPP", { locale: es })
+                    ) : (
+                      <span>Seleccione una fecha</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={scheduledDate}
+                    onSelect={setScheduledDate}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Hora</label>
+              <Input 
+                type="time"
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+
+    if (isMobile) {
+      return (
+        <Drawer open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+          <DrawerTrigger asChild>
+            <Button variant="outline" onClick={() => setIsScheduleDialogOpen(true)}>
+              <CalendarIcon className="h-4 w-4 mr-2" />
+              Programar
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Programar envío de correo</DrawerTitle>
+              <DrawerDescription>Configure cuándo desea enviar el correo</DrawerDescription>
+            </DrawerHeader>
+            <div className="px-4 py-2">
+              {content}
+            </div>
+            <DrawerFooter>
+              <Button onClick={handleSendEmail} disabled={isSending} className="w-full">
+                {isSending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {scheduleType === "now" ? "Enviar ahora" : "Programar envío"}
+                  </>
+                )}
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      );
+    }
+
+    return (
+      <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" onClick={() => setIsScheduleDialogOpen(true)}>
+            <CalendarIcon className="h-4 w-4 mr-2" />
+            Programar
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Programar envío de correo</DialogTitle>
+            <DialogDescription>Configure cuándo desea enviar el correo</DialogDescription>
+          </DialogHeader>
+          {content}
+          <DialogFooter>
+            <Button onClick={handleSendEmail} disabled={isSending} className="w-full">
+              {isSending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {scheduleType === "now" ? "Enviar ahora" : "Programar envío"}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
   };
 
   return (
@@ -430,105 +603,6 @@ const EmailTemplateEditor = () => {
                       />
                     </div>
                     
-                    {/* Email Schedule Options */}
-                    <div className="mt-6 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium">Programación de envío</h4>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setIsScheduling(!isScheduling)}
-                        >
-                          {isScheduling ? "Cancelar" : "Programar"}
-                        </Button>
-                      </div>
-                      
-                      {isScheduling && (
-                        <div className="p-4 border rounded-md bg-gray-50 space-y-3">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Tipo de programación</label>
-                            <Select
-                              value={scheduleType}
-                              onValueChange={(value: "now" | "hours" | "days") => setScheduleType(value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Seleccione cuándo enviar" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="now">Enviar ahora</SelectItem>
-                                <SelectItem value="hours">En X horas</SelectItem>
-                                <SelectItem value="days">En fecha específica</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          
-                          {scheduleType === "hours" && (
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium">Horas desde ahora</label>
-                              <div className="flex items-center gap-2">
-                                <Input 
-                                  type="number" 
-                                  min="1" 
-                                  max="72"
-                                  value={scheduledHours}
-                                  onChange={(e) => setScheduledHours(parseInt(e.target.value) || 1)}
-                                />
-                                <span>hora(s)</span>
-                              </div>
-                              <p className="text-xs text-gray-500">
-                                Se enviará aproximadamente a las {format(
-                                  new Date(Date.now() + scheduledHours * 60 * 60 * 1000),
-                                  "HH:mm, dd 'de' MMMM", 
-                                  { locale: es }
-                                )}
-                              </p>
-                            </div>
-                          )}
-                          
-                          {scheduleType === "days" && (
-                            <div className="space-y-3">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium">Seleccione fecha</label>
-                                <Popover>
-                                  <PopoverTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      className="justify-start text-left font-normal w-full"
-                                    >
-                                      <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {scheduledDate ? (
-                                        format(scheduledDate, "PPP", { locale: es })
-                                      ) : (
-                                        <span>Seleccione una fecha</span>
-                                      )}
-                                    </Button>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-auto p-0">
-                                    <Calendar
-                                      mode="single"
-                                      selected={scheduledDate}
-                                      onSelect={setScheduledDate}
-                                      initialFocus
-                                      disabled={(date) => date < new Date()}
-                                    />
-                                  </PopoverContent>
-                                </Popover>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium">Hora</label>
-                                <Input 
-                                  type="time"
-                                  value={scheduledTime}
-                                  onChange={(e) => setScheduledTime(e.target.value)}
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    
                     <Button 
                       className="w-full mt-4" 
                       onClick={handleSendEmail}
@@ -541,17 +615,8 @@ const EmailTemplateEditor = () => {
                         </>
                       ) : (
                         <>
-                          {isScheduling && scheduleType !== "now" ? (
-                            <>
-                              <Calendar className="mr-2 h-4 w-4" />
-                              Programar Envío
-                            </>
-                          ) : (
-                            <>
-                              <Send className="mr-2 h-4 w-4" />
-                              Enviar {sendMode === "bulk" ? "Correos" : "Correo"}
-                            </>
-                          )}
+                          <Send className="mr-2 h-4 w-4" />
+                          Enviar {sendMode === "bulk" ? "Correos" : "Correo"}
                         </>
                       )}
                     </Button>
@@ -661,50 +726,23 @@ const EmailTemplateEditor = () => {
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-medium">Vista Previa</h3>
               <div className="flex space-x-2">
-                {isScheduling && scheduleType !== "now" ? (
-                  <Button
-                    onClick={handleSendEmail}
-                    disabled={isSending}
-                  >
-                    {isSending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Programando...
-                      </>
-                    ) : (
-                      <>
-                        <Calendar className="mr-2 h-4 w-4" />
-                        Programar Envío
-                      </>
-                    )}
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={handleSendEmail}
-                    disabled={isSending}
-                  >
-                    {isSending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="mr-2 h-4 w-4" />
-                        Enviar
-                      </>
-                    )}
-                  </Button>
-                )}
                 <Button
-                  variant="outline"
-                  onClick={() => setIsScheduling(!isScheduling)}
+                  onClick={handleSendEmail}
+                  disabled={isSending}
                 >
-                  <Calendar className="h-4 w-4" />
-                  <span className="sr-only sm:not-sr-only sm:ml-2 sm:text-sm">
-                    {isScheduling ? "Cancelar" : "Programar"}
-                  </span>
+                  {isSending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Enviar
+                    </>
+                  )}
                 </Button>
+                <SchedulingPopup />
               </div>
             </div>
             <div className="p-4 overflow-auto max-h-[700px]">

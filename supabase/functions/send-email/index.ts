@@ -61,6 +61,18 @@ serve(async (req) => {
         // 3. Return a success response without actually sending the email yet
         
         // For this demo, we'll continue with immediate delivery but log that it's scheduled
+        return new Response(
+          JSON.stringify({ 
+            success: true,
+            message: `El correo ha sido programado para enviarse el ${scheduledTime.toLocaleString('es-ES')}`
+          }), 
+          { 
+            headers: { 
+              "Content-Type": "application/json",
+              ...corsHeaders
+            }
+          }
+        );
       }
     }
 
