@@ -44,6 +44,15 @@ const EmailTemplateEditor = () => {
     buttonUrl: "#",
     imageUrl: "",
     videoUrl: "https://youtu.be/X16kWXuBrdk", // Video de ejemplo predeterminado
+    maintenanceDate: "",
+    maintenanceDuration: "2 horas",
+    affectedSystems: "Portal de usuarios, Plataforma de aprendizaje, Base de datos principal",
+    recommendations: [
+      "Guarde y finalice su trabajo antes del inicio del mantenimiento programado",
+      "Descargue cualquier informe o documento importante que pueda necesitar durante el período de inactividad",
+      "Notifique a su equipo sobre esta ventana de mantenimiento para planificar adecuadamente",
+      "Si requiere asistencia urgente durante el mantenimiento, contacte a soporte técnico por los canales alternativos"
+    ]
   });
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [emailTo, setEmailTo] = useState<string>("");
@@ -63,7 +72,7 @@ const EmailTemplateEditor = () => {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState<boolean>(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     setTemplateContent({
       ...templateContent,
       [field]: value,
@@ -87,6 +96,21 @@ const EmailTemplateEditor = () => {
     return "https://via.placeholder.com/600x300";
   };
 
+  const handleRecommendationChange = (index: number, value: string) => {
+    const updatedRecommendations = [...templateContent.recommendations];
+    updatedRecommendations[index] = value;
+    handleInputChange('recommendations', updatedRecommendations);
+  };
+
+  const addRecommendation = () => {
+    handleInputChange('recommendations', [...templateContent.recommendations, ""]);
+  };
+
+  const removeRecommendation = (index: number) => {
+    const updatedRecommendations = templateContent.recommendations.filter((_, i) => i !== index);
+    handleInputChange('recommendations', updatedRecommendations);
+  };
+
   const getTemplateComponent = () => {
     const templateProps = {
       subject: templateContent.subject,
@@ -97,6 +121,10 @@ const EmailTemplateEditor = () => {
       buttonUrl: templateContent.buttonUrl,
       imageUrl: getCurrentImage(),
       videoUrl: templateContent.videoUrl,
+      maintenanceDate: templateContent.maintenanceDate,
+      maintenanceDuration: templateContent.maintenanceDuration,
+      affectedSystems: templateContent.affectedSystems,
+      recommendations: templateContent.recommendations,
     };
 
     switch (selectedTemplate) {
@@ -241,6 +269,10 @@ const EmailTemplateEditor = () => {
           buttonUrl: templateContent.buttonUrl,
           imageUrl: getCurrentImage(),
           videoUrl: templateContent.videoUrl,
+          maintenanceDate: templateContent.maintenanceDate,
+          maintenanceDuration: templateContent.maintenanceDuration,
+          affectedSystems: templateContent.affectedSystems,
+          recommendations: templateContent.recommendations,
         },
         // Add scheduling information
         scheduledFor: isScheduledForLater ? scheduledTime.toISOString() : undefined

@@ -11,6 +11,10 @@ interface TemplateProps {
   buttonUrl: string;
   imageUrl: string;
   videoUrl?: string;
+  maintenanceDate?: string;
+  maintenanceDuration?: string;
+  affectedSystems?: string;
+  recommendations?: string[];
 }
 
 const MaintenanceTemplate: React.FC<TemplateProps> = ({
@@ -20,8 +24,19 @@ const MaintenanceTemplate: React.FC<TemplateProps> = ({
   buttonText = "Más Información",
   buttonUrl = "#",
   imageUrl,
+  maintenanceDate,
+  maintenanceDuration = "2 horas",
+  affectedSystems = "Portal de usuarios, Plataforma de aprendizaje, Base de datos principal",
+  recommendations = [
+    "Guarde y finalice su trabajo antes del inicio del mantenimiento programado",
+    "Descargue cualquier informe o documento importante que pueda necesitar durante el período de inactividad",
+    "Notifique a su equipo sobre esta ventana de mantenimiento para planificar adecuadamente",
+    "Si requiere asistencia urgente durante el mantenimiento, contacte a soporte técnico por los canales alternativos"
+  ]
 }) => {
   const formattedDate = () => {
+    if (maintenanceDate) return maintenanceDate;
+    
     const date = new Date();
     date.setDate(date.getDate() + 3); // Ejemplo: mantenimiento en 3 días
     return date.toLocaleDateString('es-ES', { 
@@ -61,13 +76,23 @@ const MaintenanceTemplate: React.FC<TemplateProps> = ({
       
       {/* Contenido principal con diseño mejorado */}
       <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '0 0 16px 16px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-        {/* Imagen de mantenimiento */}
+        {/* Imagen de mantenimiento (ahora circular y más pequeña) */}
         <div style={{ textAlign: 'center', margin: '0 0 30px 0' }}>
-          <img 
-            src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT-Image-8-may-2025-15_45_23-min.png"
-            alt="Mantenimiento programado"
-            style={{ maxWidth: '100%', height: 'auto', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
-          />
+          <div style={{ 
+            width: '180px', 
+            height: '180px', 
+            borderRadius: '50%', 
+            overflow: 'hidden', 
+            margin: '0 auto',
+            border: '4px solid #f0f6ff',
+            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.15)'
+          }}>
+            <img 
+              src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT-Image-8-may-2025-15_45_23-min.png"
+              alt="Mantenimiento programado"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
         </div>
         
         {/* Detalles del mantenimiento con nuevo diseño */}
@@ -96,7 +121,7 @@ const MaintenanceTemplate: React.FC<TemplateProps> = ({
                 <path d="M12 6V12L16 14M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="#4f46e5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p style={{ margin: '0', fontSize: '15px' }}><strong>Duración estimada:</strong> 2 horas</p>
+            <p style={{ margin: '0', fontSize: '15px' }}><strong>Duración estimada:</strong> {maintenanceDuration}</p>
           </div>
           
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
@@ -105,7 +130,7 @@ const MaintenanceTemplate: React.FC<TemplateProps> = ({
                 <path d="M10.0002 2L3 10H10.0002V22H14.0002V10H21.0002L14.0002 2H10.0002Z" stroke="#4f46e5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p style={{ margin: '0', fontSize: '15px' }}><strong>Sistemas afectados:</strong> Portal de usuarios, Plataforma de aprendizaje, Base de datos principal</p>
+            <p style={{ margin: '0', fontSize: '15px' }}><strong>Sistemas afectados:</strong> {affectedSystems}</p>
           </div>
         </div>
         
@@ -156,10 +181,11 @@ const MaintenanceTemplate: React.FC<TemplateProps> = ({
             Recomendaciones importantes
           </h4>
           <ul style={{ margin: '0', paddingLeft: '34px', fontSize: '15px', color: '#78350f' }}>
-            <li style={{ marginBottom: '8px' }}>Guarde y finalice su trabajo antes del inicio del mantenimiento programado</li>
-            <li style={{ marginBottom: '8px' }}>Descargue cualquier informe o documento importante que pueda necesitar durante el período de inactividad</li>
-            <li style={{ marginBottom: '8px' }}>Notifique a su equipo sobre esta ventana de mantenimiento para planificar adecuadamente</li>
-            <li>Si requiere asistencia urgente durante el mantenimiento, contacte a soporte técnico por los canales alternativos</li>
+            {recommendations.map((recommendation, index) => (
+              <li key={index} style={{ marginBottom: index < recommendations.length - 1 ? '8px' : 0 }}>
+                {recommendation}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
