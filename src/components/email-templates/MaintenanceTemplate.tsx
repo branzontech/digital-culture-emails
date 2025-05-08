@@ -88,7 +88,7 @@ const MaintenanceTemplate: React.FC<TemplateProps> = ({
             boxShadow: '0 4px 12px rgba(99, 102, 241, 0.15)'
           }}>
             <img 
-              src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT-Image-8-may-2025-15_45_23-min.png"
+              src={imageUrl || "https://branzontech.com/wp-content/uploads/2025/05/ChatGPT-Image-8-may-2025-15_45_23-min.png"}
               alt="Mantenimiento programado"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
