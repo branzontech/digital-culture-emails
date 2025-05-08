@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -15,6 +14,7 @@ import TemplateTen from "@/components/email-templates/TemplateTen";
 import TemplateEleven from "@/components/email-templates/TemplateEleven";
 import TemplateTwelve from "@/components/email-templates/TemplateTwelve";
 import VideoTemplate from "@/components/email-templates/VideoTemplate";
+import MaintenanceTemplate from "@/components/email-templates/MaintenanceTemplate";
 
 interface EmailRecipient {
   email: string;
@@ -302,6 +302,7 @@ const getTemplateComponent = (templateId: string, props: any) => {
     case "template11": return React.createElement(TemplateEleven, props);
     case "template12": return React.createElement(TemplateTwelve, props);
     case "video": return React.createElement(VideoTemplate, props);
+    case "maintenance": return React.createElement(MaintenanceTemplate, props);
     default: return React.createElement(TemplateOne, props);
   }
 };
@@ -318,4 +319,3 @@ export const parseEmailList = (emailsString: string): EmailRecipient[] => {
     .filter(validateEmail)
     .map(email => ({ email }));
 };
-
