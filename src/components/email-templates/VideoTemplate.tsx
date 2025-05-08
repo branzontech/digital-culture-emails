@@ -114,30 +114,104 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
       overflow: 'hidden',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
     }}>
-      {/* Header con gradiente */}
+      {/* Header con diseño moderno y logo */}
       <div style={{ 
-        background: 'linear-gradient(135deg, #4A56E2 0%, #5463FF 100%)',
-        padding: '30px 20px',
+        position: 'relative',
+        background: 'linear-gradient(135deg, #0052A5 0%, #4A56E2 100%)',
+        padding: '40px 20px',
         textAlign: 'center',
-        color: 'white'
+        color: 'white',
+        overflow: 'hidden'
       }}>
+        {/* Elementos decorativos */}
+        <div style={{ 
+          position: 'absolute',
+          top: '-20px',
+          left: '-20px',
+          width: '120px',
+          height: '120px',
+          borderRadius: '50%',
+          background: 'rgba(255, 216, 0, 0.2)',
+          zIndex: 1
+        }}></div>
+        <div style={{ 
+          position: 'absolute',
+          bottom: '-30px',
+          right: '-30px',
+          width: '150px',
+          height: '150px',
+          borderRadius: '50%',
+          background: 'rgba(255, 216, 0, 0.15)',
+          zIndex: 1
+        }}></div>
+        
+        {/* Logo de Cultura Digital */}
+        <div style={{ 
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '20px',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px'
+          }}>
+            {/* Círculo amarillo para el logo */}
+            <div style={{
+              width: '45px',
+              height: '45px',
+              borderRadius: '50%',
+              backgroundColor: '#FFD800',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#0052A5',
+              fontWeight: 'bold',
+              fontSize: '20px',
+            }}>
+              CD
+            </div>
+            <span style={{
+              fontWeight: 'bold',
+              fontSize: '22px',
+              color: 'white'
+            }}>
+              Cultura Digital
+            </span>
+          </div>
+        </div>
+        
         {logoBase64 && (
-          <div style={{ marginBottom: '15px' }}>
+          <div style={{ marginBottom: '15px', position: 'relative', zIndex: 2 }}>
             <img src={logoBase64} alt="Logo" style={{ maxHeight: '60px', margin: '0 auto' }} />
           </div>
         )}
+        
         <h1 style={{ 
           margin: '0 0 10px',
           fontSize: '28px',
-          fontWeight: 700
+          fontWeight: 700,
+          position: 'relative',
+          zIndex: 2,
+          textShadow: '1px 1px 3px rgba(0, 0, 0, 0.2)'
         }}>
           {heading || "Nuevas estrategias digitales para tu empresa"}
         </h1>
+        
         <h2 style={{ 
           margin: '0',
           fontSize: '18px',
           fontWeight: 400,
-          opacity: 0.9
+          opacity: 0.9,
+          position: 'relative',
+          zIndex: 2,
+          maxWidth: '80%',
+          marginLeft: 'auto',
+          marginRight: 'auto'
         }}>
           {subheading || "Aprende a implementar herramientas modernas en tu organización"}
         </h2>
@@ -150,7 +224,8 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
           <div style={{ 
             marginBottom: '25px',
             borderRadius: '6px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)'
           }}>
             {renderVideoEmbed()}
           </div>
@@ -161,7 +236,8 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
           <div style={{ 
             marginBottom: '25px',
             borderRadius: '6px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)'
           }}>
             <img 
               src={imageUrl} 
@@ -202,14 +278,15 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
             href={buttonUrl || "https://ejemplo.com/registro-webinar"} 
             style={{
               display: 'inline-block',
-              backgroundColor: '#4A56E2',
+              backgroundColor: '#0052A5',
               color: 'white',
               padding: '12px 25px',
               borderRadius: '6px',
               textDecoration: 'none',
               fontWeight: 500,
               fontSize: '16px',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 6px rgba(0, 82, 165, 0.25)'
             }}
             target="_blank" 
             rel="noopener noreferrer"
@@ -221,7 +298,7 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
       
       {/* Footer con avatar 3D */}
       <div style={{ 
-        backgroundColor: '#4A56E2', 
+        backgroundColor: '#0052A5', 
         padding: '25px', 
         color: 'white', 
         textAlign: 'center',
@@ -243,7 +320,7 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
             style={{ 
               height: '85px',
               transform: 'perspective(800px) rotateX(10deg)',
-              transition: 'transform 0.3s ease'
+              animation: 'float 4s ease-in-out infinite'
             }}
           />
         </div>
