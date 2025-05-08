@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Users, Send, Loader2, ExternalLink, Calendar as CalendarIcon } from "lucide-react";
+import { Mail, Users, Send, Loader2, ExternalLink, Calendar as CalendarIcon, Video } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TemplateOne from "./email-templates/TemplateOne";
 import TemplateTwo from "./email-templates/TemplateTwo";
@@ -19,6 +18,7 @@ import TemplateNine from "./email-templates/TemplateNine";
 import ThirteenTemplate from "./email-templates/ThirteenTemplate";
 import FourteenTemplate from "./email-templates/FourteenTemplate";
 import FifteenTemplate from "./email-templates/FifteenTemplate";
+import VideoTemplate from "./email-templates/VideoTemplate";
 import { sendEmail, parseEmailList } from "@/utils/emailService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { format } from "date-fns";
@@ -42,6 +42,7 @@ const EmailTemplateEditor = () => {
     buttonText: "Leer más",
     buttonUrl: "#",
     imageUrl: "",
+    videoUrl: "",
   });
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [emailTo, setEmailTo] = useState<string>("");
@@ -94,6 +95,7 @@ const EmailTemplateEditor = () => {
       buttonText: templateContent.buttonText,
       buttonUrl: templateContent.buttonUrl,
       imageUrl: getCurrentImage(),
+      videoUrl: templateContent.videoUrl,
     };
 
     switch (selectedTemplate) {
@@ -109,6 +111,7 @@ const EmailTemplateEditor = () => {
       case "template13": return <ThirteenTemplate {...templateProps} />;
       case "template14": return <FourteenTemplate {...templateProps} />;
       case "template15": return <FifteenTemplate {...templateProps} />;
+      case "video": return <VideoTemplate {...templateProps} />;
       default: return <TemplateOne {...templateProps} />;
     }
   };
@@ -235,6 +238,7 @@ const EmailTemplateEditor = () => {
           buttonText: templateContent.buttonText,
           buttonUrl: templateContent.buttonUrl,
           imageUrl: getCurrentImage(),
+          videoUrl: templateContent.videoUrl,
         },
         // Add scheduling information
         scheduledFor: isScheduledForLater ? scheduledTime.toISOString() : undefined
@@ -447,7 +451,7 @@ const EmailTemplateEditor = () => {
               <Tabs defaultValue="content" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="content">Contenido</TabsTrigger>
-                  <TabsTrigger value="image">Imagen</TabsTrigger>
+                  <TabsTrigger value="media">Media</TabsTrigger>
                   <TabsTrigger value="send">Enviar</TabsTrigger>
                 </TabsList>
                 <TabsContent value="content" className="space-y-4 mt-4">
@@ -519,8 +523,24 @@ const EmailTemplateEditor = () => {
                     />
                   </div>
                 </TabsContent>
-                <TabsContent value="image" className="space-y-4 mt-4">
+                <TabsContent value="media" className="space-y-4 mt-4">
+                  {/* Nueva sección para el video */}
                   <div className="space-y-2">
+                    <label htmlFor="videoUrl" className="text-sm font-medium">
+                      URL del Video (YouTube o Vimeo)
+                    </label>
+                    <Input
+                      id="videoUrl"
+                      placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX"
+                      value={templateContent.videoUrl}
+                      onChange={(e) => handleInputChange("videoUrl", e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Ingresa una URL de YouTube o Vimeo para incrustar el video en el correo.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-2 mt-4">
                     <label htmlFor="imageUrl" className="text-sm font-medium">
                       URL de la Imagen
                     </label>
@@ -550,6 +570,7 @@ const EmailTemplateEditor = () => {
                     </div>
                   )}
                 </TabsContent>
+                
                 <TabsContent value="send" className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium">Envío de Correo</h3>
@@ -715,6 +736,14 @@ const EmailTemplateEditor = () => {
                   onClick={() => setSelectedTemplate("template15")}
                 >
                   <span className="text-xs">Minimalista</span>
+                </Button>
+                <Button
+                  variant={selectedTemplate === "video" ? "default" : "outline"}
+                  className="h-auto p-4 flex flex-col"
+                  onClick={() => setSelectedTemplate("video")}
+                >
+                  <Video className="h-4 w-4 mb-1" />
+                  <span className="text-xs">Video</span>
                 </Button>
               </div>
             </CardContent>

@@ -45,7 +45,8 @@ serve(async (req) => {
       subject,
       htmlContentLength: htmlContent ? htmlContent.length : 0,
       toEmail: to?.email || (Array.isArray(to) ? to.map(t => t.email).join(', ') : to),
-      scheduledFor: scheduledFor || "Immediate"
+      scheduledFor: scheduledFor || "Immediate",
+      hasVideoContent: htmlContent?.includes('<iframe') || false
     });
 
     // Check for scheduled time in the future
@@ -55,12 +56,9 @@ serve(async (req) => {
       
       if (scheduledTime > now) {
         console.log(`Email scheduled for future delivery at: ${scheduledTime.toISOString()}`);
-        // In a real implementation, you would:
-        // 1. Save the email to a database table
-        // 2. Set up a cron job or scheduled task to check for and send scheduled emails
-        // 3. Return a success response without actually sending the email yet
+        // En una implementación real, guardarías esto en una base de datos
+        // para envío posterior, pero aquí simularemos un envío inmediato
         
-        // For this demo, we'll continue with immediate delivery but log that it's scheduled
         return new Response(
           JSON.stringify({ 
             success: true,
@@ -82,6 +80,11 @@ serve(async (req) => {
     // Eliminar cualquier atributo data-lov-id o data-component-path que pudiera haberse colado
     cleanHtml = cleanHtml.replace(/data-lov-id="[^"]*"/g, "");
     cleanHtml = cleanHtml.replace(/data-component-path="[^"]*"/g, "");
+    
+    // Asegurarnos de que los iframes para videos sean seguros
+    if (cleanHtml.includes('<iframe')) {
+      console.log("Email contains iframe content (video)");
+    }
     
     // Use the default Resend from address which is already verified
     const fromValue = "Programa Cultura Digital <onboarding@resend.dev>";

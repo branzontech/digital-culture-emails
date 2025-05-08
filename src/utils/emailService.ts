@@ -14,6 +14,7 @@ import TemplateNine from "@/components/email-templates/TemplateNine";
 import TemplateTen from "@/components/email-templates/TemplateTen";
 import TemplateEleven from "@/components/email-templates/TemplateEleven";
 import TemplateTwelve from "@/components/email-templates/TemplateTwelve";
+import VideoTemplate from "@/components/email-templates/VideoTemplate";
 
 interface EmailRecipient {
   email: string;
@@ -34,6 +35,7 @@ interface EmailSendOptions {
     buttonText: string;
     buttonUrl: string;
     imageUrl: string;
+    videoUrl?: string; // Añadimos la opción para URL de video
   };
   scheduledFor?: string; // ISO string date for scheduled sending
 }
@@ -299,6 +301,7 @@ const getTemplateComponent = (templateId: string, props: any) => {
     case "template10": return React.createElement(TemplateTen, props);
     case "template11": return React.createElement(TemplateEleven, props);
     case "template12": return React.createElement(TemplateTwelve, props);
+    case "video": return React.createElement(VideoTemplate, props);
     default: return React.createElement(TemplateOne, props);
   }
 };
