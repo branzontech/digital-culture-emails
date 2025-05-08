@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Users, Send, Loader2, ExternalLink, Calendar as CalendarIcon, Video, Tool } from "lucide-react";
+import { Mail, Users, Send, Loader2, ExternalLink, Calendar as CalendarIcon, Video, Wrench } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TemplateOne from "./email-templates/TemplateOne";
 import TemplateTwo from "./email-templates/TemplateTwo";
@@ -752,7 +752,7 @@ const EmailTemplateEditor = () => {
                   className="h-auto p-4 flex flex-col"
                   onClick={() => setSelectedTemplate("maintenance")}
                 >
-                  <Tool className="h-4 w-4 mb-1" />
+                  <Wrench className="h-4 w-4 mb-1" />
                   <span className="text-xs">Mantenimiento</span>
                 </Button>
               </div>
