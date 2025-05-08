@@ -131,7 +131,7 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
           fontSize: '28px',
           fontWeight: 700
         }}>
-          {heading}
+          {heading || "Nuevas estrategias digitales para tu empresa"}
         </h1>
         <h2 style={{ 
           margin: '0',
@@ -139,7 +139,7 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
           fontWeight: 400,
           opacity: 0.9
         }}>
-          {subheading}
+          {subheading || "Aprende a implementar herramientas modernas en tu organización"}
         </h2>
       </div>
       
@@ -181,13 +181,25 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
           lineHeight: '1.6',
           fontSize: '16px',
           marginBottom: '25px'
-        }} dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br />') }}>
+        }} dangerouslySetInnerHTML={{ __html: content || `
+          <p>Estimados colaboradores:</p>
+          <p>Nos complace compartir con ustedes este importante video sobre las nuevas tendencias en transformación digital que están revolucionando nuestro sector.</p>
+          <p>En este video, exploramos:</p>
+          <ul>
+            <li>Las tecnologías emergentes que están cambiando la forma de trabajar</li>
+            <li>Estrategias prácticas para implementar estas herramientas en su día a día</li>
+            <li>Casos de éxito de empresas que han aumentado su productividad significativamente</li>
+            <li>Pasos concretos para iniciar la transformación digital en su área</li>
+          </ul>
+          <p>Les invitamos a ver el video completo y a participar en nuestra próxima sesión de preguntas y respuestas donde podremos profundizar en estos temas.</p>
+          <p>¡Juntos hacia la innovación digital!</p>
+        `.replace(/\n/g, '<br />') }}>
         </div>
         
         {/* Botón de llamada a la acción */}
         <div style={{ textAlign: 'center', marginTop: '30px' }}>
           <a 
-            href={buttonUrl} 
+            href={buttonUrl || "https://ejemplo.com/registro-webinar"} 
             style={{
               display: 'inline-block',
               backgroundColor: '#4A56E2',
@@ -202,24 +214,49 @@ const VideoTemplate: React.FC<VideoTemplateProps> = ({
             target="_blank" 
             rel="noopener noreferrer"
           >
-            {buttonText}
+            {buttonText || "Registrarse para el próximo webinar"}
           </a>
         </div>
       </div>
       
-      {/* Footer */}
+      {/* Footer con avatar 3D */}
       <div style={{ 
-        backgroundColor: '#f7f9fc', 
-        padding: '20px', 
+        backgroundColor: '#4A56E2', 
+        padding: '25px', 
+        color: 'white', 
         textAlign: 'center',
-        borderTop: '1px solid #eaeaea',
-        color: '#666',
-        fontSize: '14px'
+        fontSize: '13px',
+        position: 'relative',
+        overflow: 'visible'
       }}>
-        <p style={{ margin: '0 0 10px' }}>© 2025 Programa de Cultura Digital - Todos los derechos reservados</p>
-        <p style={{ margin: '0', fontSize: '12px' }}>
-          Si no desea recibir más correos, <a href="#" style={{ color: '#4A56E2', textDecoration: 'none' }}>haga clic aquí</a> para darse de baja.
-        </p>
+        {/* Avatar 3D que resalta desde el footer */}
+        <div style={{ 
+          position: 'absolute', 
+          top: '-45px', 
+          left: '50%', 
+          transform: 'translateX(-50%)',
+          filter: 'drop-shadow(0px 6px 12px rgba(0,0,0,0.25))'
+        }}>
+          <img 
+            src="https://branzontech.com/wp-content/uploads/2025/05/ChatGPT_Image_2_may_2025__15_32_43-removebg-preview.png" 
+            alt="Avatar 3D" 
+            style={{ 
+              height: '85px',
+              transform: 'perspective(800px) rotateX(10deg)',
+              transition: 'transform 0.3s ease'
+            }}
+          />
+        </div>
+        
+        {/* Añade espaciado superior para que el texto no se solape con la imagen */}
+        <div style={{ paddingTop: '50px' }}>
+          <p style={{ margin: '0 0 10px 0', opacity: '0.9' }}>
+            Programa de Cultura Digital | cultura.digital@ejemplo.com
+          </p>
+          <p style={{ margin: '0', opacity: '0.7' }}>
+            © 2025 Todos los derechos reservados
+          </p>
+        </div>
       </div>
     </div>
   );

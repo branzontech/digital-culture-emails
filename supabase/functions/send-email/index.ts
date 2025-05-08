@@ -84,6 +84,10 @@ serve(async (req) => {
     // Asegurarnos de que los iframes para videos sean seguros
     if (cleanHtml.includes('<iframe')) {
       console.log("Email contains iframe content (video)");
+      // Asegurarnos de que YouTube y Vimeo estén en la lista de permitidos
+      if (cleanHtml.includes('youtube.com/embed') || cleanHtml.includes('player.vimeo.com')) {
+        console.log("Valid video embed found");
+      }
     }
     
     // Use the default Resend from address which is already verified

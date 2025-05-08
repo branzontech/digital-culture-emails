@@ -42,7 +42,7 @@ const EmailTemplateEditor = () => {
     buttonText: "Leer más",
     buttonUrl: "#",
     imageUrl: "",
-    videoUrl: "",
+    videoUrl: "https://youtu.be/X16kWXuBrdk", // Video de ejemplo predeterminado
   });
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [emailTo, setEmailTo] = useState<string>("");
